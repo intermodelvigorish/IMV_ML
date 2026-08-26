@@ -1,0 +1,4 @@
+imvpy[deep-learning] @ git+https://github.com/intermodelvigorish/imvpy.git@de7fe7a80300ae849fcdc37519651509b380a8d1
+lightgbm>=4.6,<5
+ucimlrepo>=0.0.7,<1
+xgboost>=3.4,<4
