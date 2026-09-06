@@ -1,0 +1,172 @@
+"""One figure style shared by every IMV example notebook.
+
+Panels from different examples end up side by side in the paper, so their size,
+palette, weights, sizes and edge colour have to agree. Importing this module and
+calling :func:`apply` is the whole contract::
+
+    import sys
+    sys.path.insert(0, str(PROJECT_ROOT / "src"))   # notebooks in src/<example>/
+    import shared_style
+
+    shared_style.apply()
+    figure, axes = plt.subplots(2, 3, figsize=shared_style.figure_size(2, 3),
+                                layout="constrained")
+
+Every setting is also a module constant, so a notebook that needs to deviate can
+read the constant and override one call instead of restyling from scratch.
+"""
+from __future__ import annotations
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+__all__ = [
+    "apply", "figure_size", "categorical_colors", "sequential_cmap",
+    "bar_style", "heatmap_style", "rc_params",
+]
+
+# --------------------------------------------------------------------------- #
+# Geometry
+# --------------------------------------------------------------------------- #
+
+# One panel, in inches. The example notebooks were written against this size and
+# the multi-panel figures are built as whole multiples of it, so a single panel
+# lifted out of a grid still matches the standalone figures.
+PANEL_WIDTH = 5.4
+PANEL_HEIGHT = 4.6
+FIGURE_DPI = 110              # on-screen only; save_figure writes at 800
+
+# --------------------------------------------------------------------------- #
+# Colour
+# --------------------------------------------------------------------------- #
+
+# `crest` is what the published IMV figures use, as both the heatmap ramp and
+# the source of the bar colours, which keeps a bar and the matrix cell beside it
+# reading on the same scale.
+PALETTE = "crest"
+EDGE_COLOR = "#1f2a30"        # near-black with the palette's blue-green cast
+EDGE_WIDTH = 0.6
+GRID_COLOR = "#d7dcdf"
+AXIS_COLOR = "#3f484d"
+TEXT_COLOR = "#1f2a30"
+ERROR_COLOR = "#3f484d"
+CAPSIZE = 3
+
+# --------------------------------------------------------------------------- #
+# Type
+# --------------------------------------------------------------------------- #
+
+FONT_FAMILY = ["DejaVu Sans"]   # bundled with matplotlib, so figures travel
+BASE_FONT_SIZE = 10
+TICK_FONT_SIZE = 9
+LABEL_FONT_SIZE = 10
+TITLE_FONT_SIZE = 11
+SUPTITLE_FONT_SIZE = 13
+LEGEND_FONT_SIZE = 9
+ANNOTATION_FONT_SIZE = 9
+
+BODY_FONT_WEIGHT = "normal"
+LABEL_FONT_WEIGHT = "medium"
+TITLE_FONT_WEIGHT = "semibold"
+SUPTITLE_FONT_WEIGHT = "bold"
+
+TITLE_KWARGS = {"fontsize": TITLE_FONT_SIZE, "fontweight": TITLE_FONT_WEIGHT,
+                "color": TEXT_COLOR}
+SUPTITLE_KWARGS = {"fontsize": SUPTITLE_FONT_SIZE, "fontweight": SUPTITLE_FONT_WEIGHT,
+                   "color": TEXT_COLOR}
+LABEL_KWARGS = {"fontsize": LABEL_FONT_SIZE, "fontweight": LABEL_FONT_WEIGHT,
+                "color": TEXT_COLOR}
+
+
+def rc_params():
+    """The style as a plain rcParams mapping, for callers that prefer a context."""
+    return {
+        "figure.figsize": (PANEL_WIDTH, PANEL_HEIGHT),
+        "figure.dpi": FIGURE_DPI,
+        "figure.facecolor": "white",
+        "savefig.facecolor": "white",
+        "font.family": FONT_FAMILY,
+        "font.size": BASE_FONT_SIZE,
+        "font.weight": BODY_FONT_WEIGHT,
+        "text.color": TEXT_COLOR,
+        "axes.titlesize": TITLE_FONT_SIZE,
+        "axes.titleweight": TITLE_FONT_WEIGHT,
+        "axes.labelsize": LABEL_FONT_SIZE,
+        "axes.labelweight": LABEL_FONT_WEIGHT,
+        "axes.labelcolor": TEXT_COLOR,
+        "axes.edgecolor": AXIS_COLOR,
+        "axes.linewidth": EDGE_WIDTH,
+        "axes.facecolor": "white",
+        # Bars are read against their neighbours, so the frame is dropped and a
+        # faint horizontal rule carries the comparison instead.
+        "axes.spines.top": False,
+        "axes.spines.right": False,
+        "axes.grid": True,
+        "axes.grid.axis": "y",
+        "axes.axisbelow": True,
+        "grid.color": GRID_COLOR,
+        "grid.linewidth": 0.6,
+        "xtick.labelsize": TICK_FONT_SIZE,
+        "ytick.labelsize": TICK_FONT_SIZE,
+        "xtick.color": AXIS_COLOR,
+        "ytick.color": AXIS_COLOR,
+        "xtick.labelcolor": TEXT_COLOR,
+        "ytick.labelcolor": TEXT_COLOR,
+        "legend.fontsize": LEGEND_FONT_SIZE,
+        "legend.frameon": False,
+    }
+
+
+def apply(**overrides):
+    """Install the style globally; keyword overrides are applied on top."""
+    settings = {**rc_params(), **overrides}
+    plt.rcParams.update(settings)
+    return settings
+
+
+def figure_size(n_rows=1, n_cols=1, *, width=PANEL_WIDTH, height=PANEL_HEIGHT):
+    """Figure size for a grid of panels, in inches."""
+    if n_rows < 1 or n_cols < 1:
+        raise ValueError("a figure needs at least one row and one column")
+    return (n_cols * width, n_rows * height)
+
+
+def categorical_colors(n_colors):
+    """`n_colors` well-separated colours drawn from the shared palette."""
+    return sns.color_palette(PALETTE, n_colors)
+
+
+def sequential_cmap():
+    """The shared palette as a continuous colormap, for heatmaps and ramps."""
+    return sns.color_palette(PALETTE, as_cmap=True)
+
+
+def bar_style(n_bars):
+    """Keyword arguments for a categorical bar chart with error bars."""
+    return {
+        "color": categorical_colors(n_bars),
+        "edgecolor": EDGE_COLOR,
+        "linewidth": EDGE_WIDTH,
+        "capsize": CAPSIZE,
+        "error_kw": {"ecolor": ERROR_COLOR, "elinewidth": EDGE_WIDTH,
+                     "capthick": EDGE_WIDTH},
+    }
+
+
+def heatmap_style(n_classes):
+    """Keyword arguments for an annotated square heatmap of `n_classes` classes.
+
+    The annotation shrinks and loses a decimal as the matrix grows, which is the
+    point at which three decimals in a seven-class grid stop being readable.
+    """
+    crowded = n_classes > 5
+    return {
+        "cmap": sequential_cmap(),
+        "annot": True,
+        "fmt": ".2f" if crowded else ".3f",
+        "annot_kws": {"fontsize": ANNOTATION_FONT_SIZE - (2 if crowded else 0),
+                      "fontweight": BODY_FONT_WEIGHT},
+        "linewidths": EDGE_WIDTH,
+        "linecolor": EDGE_COLOR,
+        "square": True,
+    }
