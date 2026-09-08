@@ -2,11 +2,12 @@
 
 from dataclasses import dataclass
 from pathlib import Path
+import logging
 import os
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from matplotlib.colors import Normalize
+from matplotlib.colors import LinearSegmentedColormap, Normalize
 from matplotlib.ticker import MultipleLocator
 import numpy as np
 import pandas as pd
@@ -42,10 +43,65 @@ ABLATION_EXAMPLES = (
     ),
 )
 ABLATION_SEEDS = tuple(range(42, 52))
-COLORMAP = "Spectral_r"
+# The project palette, warm end to cool end. Every figure draws from these six
+# colours, either as the continuous ramp below or sampled for categorical marks.
+PALETTE_COLORS = {
+    "red": "#E66859",
+    "cream": "#FEE7BA",
+    "light_blue": "#75BBD4",
+    "blue": "#74ADD1",
+    "steel_blue": "#416FA0",
+    "navy": "#274668",
+}
+COLORMAP = "imv"
+# Stops run cool to warm, so a low value reads navy and a high one red, which is
+# the direction every published figure already uses. Cream sits at the midpoint:
+# a diverging norm centred on zero (the ablation matrix) then puts zero on the
+# neutral colour rather than part-way up a blue.
+COLORMAP_STOPS = (
+    (0.00, PALETTE_COLORS["navy"]),
+    (0.16, PALETTE_COLORS["steel_blue"]),
+    (0.30, PALETTE_COLORS["blue"]),
+    (0.38, PALETTE_COLORS["light_blue"]),
+    (0.50, PALETTE_COLORS["cream"]),
+    (1.00, PALETTE_COLORS["red"]),
+)
+
+
+def _register_colormap():
+    """Register the project ramp under COLORMAP so any cmap= name resolves it."""
+    colormap = LinearSegmentedColormap.from_list(COLORMAP, COLORMAP_STOPS)
+    # force, because a notebook that re-imports this module in a live kernel
+    # would otherwise fail on the second registration.
+    mpl.colormaps.register(colormap, name=COLORMAP, force=True)
+    mpl.colormaps.register(colormap.reversed(), name=f"{COLORMAP}_r", force=True)
+    return colormap
+
+
+_register_colormap()
+# Helvetica on macOS, its metric-compatible URW clone where a Linux box has it,
+# and matplotlib's own font as the guaranteed last resort.
+FONT_CANDIDATES = ("Helvetica", "Nimbus Sans", "DejaVu Sans")
+
+
+def _installed_font_families(candidates=FONT_CANDIDATES):
+    """The candidates this machine actually has, in order of preference.
+
+    matplotlib logs `findfont: Font family 'X' not found.` once per lookup for
+    every name in the chain it cannot resolve, even when a later name does
+    resolve, so a machine missing one of these would print the warning for every
+    figure it draws. Filtering here keeps the chain portable and the log clean.
+    """
+    from matplotlib import font_manager
+
+    installed = {font.name for font in font_manager.fontManager.ttflist}
+    return [name for name in candidates if name in installed] or [candidates[-1]]
+
+
+FONT_FAMILY = _installed_font_families()
 PAPER_STYLE = {
-    "font.family": ["Helvetica", "Nimbus Sans", "DejaVu Sans"],
-    "font.sans-serif": ["Helvetica", "Nimbus Sans", "DejaVu Sans"],
+    "font.family": FONT_FAMILY,
+    "font.sans-serif": FONT_FAMILY,
     "mathtext.fontset": "dejavusans",
     "font.size": 11,
     "axes.titlesize": 13,
@@ -61,7 +117,11 @@ PAPER_STYLE = {
 
 
 def spectral_colors(count):
-    """Sample the project colormap consistently for categorical bars/lines."""
+    """Sample the project colormap consistently for categorical bars/lines.
+
+    Named for the ramp this project used to carry; it samples whatever COLORMAP
+    names, so the callers across the example notebooks did not have to change.
+    """
     return mpl.colormaps[COLORMAP](np.linspace(0.08, 0.92, count))
 
 
@@ -331,6 +391,10 @@ def save_publication_figure(figure, destination, *, dpi=800):
         path = path.with_suffix("")
     path = Path(f"{path}.pdf")
     path.parent.mkdir(parents=True, exist_ok=True)
+    # Embedding macOS's Helvetica subsets a .ttc whose post table and creation
+    # date trip two fontTools warnings on every export; neither says anything
+    # about the figure, and they would otherwise land in every notebook output.
+    logging.getLogger("fontTools").setLevel(logging.ERROR)
     with mpl.rc_context(PAPER_STYLE):
         figure.savefig(path, format="pdf", dpi=dpi, bbox_inches="tight")
     return {"pdf": path}

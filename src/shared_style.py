@@ -21,13 +21,15 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 if __package__:
-    from .figure_utils import COLORMAP, PAPER_STYLE, spectral_colors
+    from .figure_utils import (COLORMAP, PALETTE_COLORS, PAPER_STYLE,
+                               spectral_colors)
 else:
-    from figure_utils import COLORMAP, PAPER_STYLE, spectral_colors
+    from figure_utils import (COLORMAP, PALETTE_COLORS, PAPER_STYLE,
+                              spectral_colors)
 
 __all__ = [
     "apply", "figure_size", "categorical_colors", "sequential_cmap",
-    "bar_style", "heatmap_style", "rc_params",
+    "bar_style", "heatmap_style", "rc_params", "COLORS",
 ]
 
 # --------------------------------------------------------------------------- #
@@ -47,9 +49,13 @@ FIGURE_DPI = 110              # on-screen only; publication exports are PDF
 
 # Keep palette and typography in sync with all other publication figures.
 PALETTE = COLORMAP
+# The six named colours behind the ramp, for a mark that needs one on its own
+# ("navy", "steel_blue", "blue", "light_blue", "cream", "red").
+COLORS = PALETTE_COLORS
 EDGE_COLOR = "#1f2a30"        # near-black with the palette's blue-green cast
 EDGE_WIDTH = 0.6
 GRID_COLOR = "#d7dcdf"
+GRID_LINESTYLE = "--"
 AXIS_COLOR = "#3f484d"
 TEXT_COLOR = "#1f2a30"
 ERROR_COLOR = "#3f484d"
@@ -68,6 +74,9 @@ SUPTITLE_FONT_SIZE = 13
 LEGEND_FONT_SIZE = 9
 ANNOTATION_FONT_SIZE = 9
 
+# Panel titles sit flush with the left edge of the axes, so a1/a2 and the rest
+# of the panel labels line up down the figure.
+TITLE_LOCATION = "left"
 BODY_FONT_WEIGHT = "normal"
 LABEL_FONT_WEIGHT = "medium"
 TITLE_FONT_WEIGHT = "semibold"
@@ -96,6 +105,7 @@ def rc_params():
         "text.color": TEXT_COLOR,
         "axes.titlesize": TITLE_FONT_SIZE,
         "axes.titleweight": TITLE_FONT_WEIGHT,
+        "axes.titlelocation": TITLE_LOCATION,
         "axes.labelsize": LABEL_FONT_SIZE,
         "axes.labelweight": LABEL_FONT_WEIGHT,
         "axes.labelcolor": TEXT_COLOR,
@@ -110,6 +120,7 @@ def rc_params():
         "axes.grid.axis": "y",
         "axes.axisbelow": True,
         "grid.color": GRID_COLOR,
+        "grid.linestyle": GRID_LINESTYLE,
         "grid.linewidth": 0.6,
         "xtick.labelsize": TICK_FONT_SIZE,
         "ytick.labelsize": TICK_FONT_SIZE,
