@@ -13,7 +13,7 @@ usage() {
     cat <<'EOF'
 Usage: ./run_all.sh [--fresh|--resume] [--install] [--dry-run]
 
-Run empirical and simulation notebooks sequentially, then results-only plotters.
+Run empirical and simulation notebooks sequentially, then the results-only plotter.
 Each notebook parallelizes its own independent seed/model jobs.
 
   --fresh    Clear output/, then recompute every seed/model result (default).
@@ -52,6 +52,7 @@ done
 
 export IMV_N_JOBS=${IMV_N_JOBS:-15}
 export IMV_TORCH_JOBS=${IMV_TORCH_JOBS:-6}
+export IMV_KERNEL_NAME=${IMV_KERNEL_NAME:-imv-ml}
 export MPLCONFIGDIR=${MPLCONFIGDIR:-/tmp/imv-mplconfig-${UID}}
 export IMV_FIGURE_DIR="${IMV_FIGURE_DIR:-$OUTPUT_DIR/figures}"
 export PYTHONUNBUFFERED=1
@@ -136,6 +137,40 @@ mkdir -p "$MPLCONFIGDIR"
 if ((INSTALL)); then
     printf '\nInstalling requirements...\n'
     python -m pip install --disable-pip-version-check --quiet -r requirements.txt
+    python -m ipykernel install --sys-prefix --name "$IMV_KERNEL_NAME" \
+        --display-name 'Python (IMV_ML)'
+fi
+
+# Check the interpreter and compiled imports before a fresh run clears output/.
+printf '\nChecking the Python environment and notebook kernel...\n'
+if ! python - <<'PY'
+import os
+import sys
+from importlib.metadata import version
+
+from packaging.version import Version
+
+if not Version("1.26") <= Version(version("numpy")) < Version("2"):
+    raise SystemExit(f"{sys.executable}: this project requires numpy>=1.26,<2; "
+                     f"found {version('numpy')}")
+
+import matplotlib.pyplot
+import imvpy
+import shap
+from alibi.explainers import AnchorTabular
+from lime.lime_tabular import LimeTabularExplainer
+from lightgbm import LGBMClassifier
+from xgboost import XGBClassifier
+from jupyter_client.kernelspec import KernelSpecManager
+
+kernel = KernelSpecManager().get_kernel_spec(os.environ["IMV_KERNEL_NAME"])
+print(f"Python: {sys.executable}")
+print(f"Kernel: {os.environ['IMV_KERNEL_NAME']} ({kernel.argv[0]})")
+PY
+then
+    printf '\nEnvironment check failed; no notebooks were run and output/ was not cleared.\n' >&2
+    printf 'Activate the project environment and follow the Setup section in README.md.\n' >&2
+    exit 1
 fi
 
 if [[ $MODE == fresh ]]; then
@@ -188,11 +223,12 @@ for index in "${!NOTEBOOKS[@]}"; do
     printf '\n[%d/%d] Running %s\n' \
         "$((index + 1))" "${#NOTEBOOKS[@]}" "$notebook"
 
-    setsid jupyter nbconvert \
+    setsid python -m nbconvert \
         --execute \
         --to notebook \
         --inplace \
         --ExecutePreprocessor.timeout=-1 \
+        --ExecutePreprocessor.kernel_name="$IMV_KERNEL_NAME" \
         "$notebook" &
     current_pid=$!
 

@@ -15,13 +15,13 @@ shap_imv_titanic,Titanic,logistic_regression,5,Fare,0.0185,0.0008498365855987
 shap_imv_titanic,Titanic,logistic_regression,6,Embarked,0.0131,0.0007378647873726
 shap_imv_titanic,Titanic,logistic_regression,7,Alone,0.0111,0.0008755950357709
 shap_imv_titanic,Titanic,logistic_regression,8,Age,0.0045,0.0009718253158075
-shap_imv_titanic,Titanic,xgboost,1,Title,0.1129,0.0020248456731316
-shap_imv_titanic,Titanic,xgboost,2,Sex,0.1048,0.0022010098692292
-shap_imv_titanic,Titanic,xgboost,3,Fare,0.0598,0.0052451035367389
+shap_imv_titanic,Titanic,xgboost,1,Title,0.1133,0.0022135943621178
+shap_imv_titanic,Titanic,xgboost,2,Sex,0.1051,0.0019692073983655
+shap_imv_titanic,Titanic,xgboost,3,Fare,0.0603,0.0053758720222862
 shap_imv_titanic,Titanic,xgboost,4,Class,0.0453999999999999,0.0010749676997731
-shap_imv_titanic,Titanic,xgboost,5,AgeClass,0.0224,0.0041686661868969
-shap_imv_titanic,Titanic,xgboost,6,Embarked,0.0127,0.0014181364924121
-shap_imv_titanic,Titanic,xgboost,7,Alone,0.0086,0.0010749676997731
+shap_imv_titanic,Titanic,xgboost,5,AgeClass,0.0222,0.0040496913462633
+shap_imv_titanic,Titanic,xgboost,6,Embarked,0.0125,0.0015811388300841
+shap_imv_titanic,Titanic,xgboost,7,Alone,0.0087,0.0011595018087284
 shap_imv_titanic,Titanic,xgboost,8,Age,-0.0002,0.0035839146815241
 shap_imv_breast_cancer,Breast Cancer,lightgbm,1,radius1,0.1266,0.0038930136855083
 shap_imv_breast_cancer,Breast Cancer,lightgbm,2,concave_points1,0.1262,0.0035839146815241
@@ -39,14 +39,14 @@ shap_imv_breast_cancer,Breast Cancer,logistic_regression,5,texture1,0.0504,0.002
 shap_imv_breast_cancer,Breast Cancer,logistic_regression,6,smoothness1,0.0306,0.0008432740427115
 shap_imv_breast_cancer,Breast Cancer,logistic_regression,7,symmetry1,0.0211,0.0018529256146249
 shap_imv_breast_cancer,Breast Cancer,logistic_regression,8,fractal_dimension1,0.0162,0.0013165611772087
-shap_imv_breast_cancer,Breast Cancer,xgboost,1,concave_points1,0.1286999999999999,0.0041109609582188
-shap_imv_breast_cancer,Breast Cancer,xgboost,2,radius1,0.1276,0.0030258148581093
-shap_imv_breast_cancer,Breast Cancer,xgboost,3,concavity1,0.1152,0.0030110906108363
-shap_imv_breast_cancer,Breast Cancer,xgboost,4,compactness1,0.071,0.0023094010767584
-shap_imv_breast_cancer,Breast Cancer,xgboost,5,texture1,0.0513,0.0043728963196287
-shap_imv_breast_cancer,Breast Cancer,xgboost,6,smoothness1,0.0278,0.0036147844564602
-shap_imv_breast_cancer,Breast Cancer,xgboost,7,symmetry1,0.0133,0.0047152235719351
-shap_imv_breast_cancer,Breast Cancer,xgboost,8,fractal_dimension1,0.0029,0.0053634565968847
+shap_imv_breast_cancer,Breast Cancer,xgboost,1,concave_points1,0.1285,0.0044284434185288
+shap_imv_breast_cancer,Breast Cancer,xgboost,2,radius1,0.1275,0.0029907264074877
+shap_imv_breast_cancer,Breast Cancer,xgboost,3,concavity1,0.1152,0.0031902629637347
+shap_imv_breast_cancer,Breast Cancer,xgboost,4,compactness1,0.0708999999999999,0.0026012817353502
+shap_imv_breast_cancer,Breast Cancer,xgboost,5,texture1,0.0515,0.0029154759474226
+shap_imv_breast_cancer,Breast Cancer,xgboost,6,smoothness1,0.027,0.0032317865716108
+shap_imv_breast_cancer,Breast Cancer,xgboost,7,symmetry1,0.0128,0.00436653943835
+shap_imv_breast_cancer,Breast Cancer,xgboost,8,fractal_dimension1,0.0031,0.0042018514437751
 shap_imv_adult_income,Adult Income,lightgbm,1,married,0.05,0.0
 shap_imv_adult_income,Adult Income,lightgbm,2,capital-gain,0.045,0.0
 shap_imv_adult_income,Adult Income,lightgbm,3,education-num,0.034,0.0

@@ -3,14 +3,14 @@ multi_imv_car_evaluation,Car Evaluation,lightgbm,0,0.41536728846391524,0.0008059
 multi_imv_car_evaluation,Car Evaluation,lightgbm,1,0.26776880398497227,0.0004300694946849208,acc
 multi_imv_car_evaluation,Car Evaluation,lightgbm,2,0.037167190988280904,0.0003404013562809949,good
 multi_imv_car_evaluation,Car Evaluation,lightgbm,3,0.03742344235037484,0.0001472562174835357,vgood
-multi_imv_car_evaluation,Car Evaluation,logistic_regression,0,0.1478485998975053,0.0012055406089850225,unacc
-multi_imv_car_evaluation,Car Evaluation,logistic_regression,1,0.04647512542428993,0.0008805023129128235,acc
-multi_imv_car_evaluation,Car Evaluation,logistic_regression,2,0.00310906224444849,0.00042676088554869117,good
-multi_imv_car_evaluation,Car Evaluation,logistic_regression,3,0.01962176655849236,0.00018403113176271966,vgood
-multi_imv_car_evaluation,Car Evaluation,xgboost,0,0.4042672100117299,0.0005351560753114365,unacc
-multi_imv_car_evaluation,Car Evaluation,xgboost,1,0.25200421157348635,0.00046766193820547655,acc
-multi_imv_car_evaluation,Car Evaluation,xgboost,2,0.03414580412092734,0.0002567358719372371,good
-multi_imv_car_evaluation,Car Evaluation,xgboost,3,0.03557030709217905,0.0001754069343836415,vgood
+multi_imv_car_evaluation,Car Evaluation,logistic_regression,0,0.14784859989754798,0.0012055406090114929,unacc
+multi_imv_car_evaluation,Car Evaluation,logistic_regression,1,0.04647512542438594,0.0008805023129598271,acc
+multi_imv_car_evaluation,Car Evaluation,logistic_regression,2,0.0031090622444370003,0.00042676088554286835,good
+multi_imv_car_evaluation,Car Evaluation,logistic_regression,3,0.019621766558508648,0.000184031131777332,vgood
+multi_imv_car_evaluation,Car Evaluation,xgboost,0,0.404267210023513,0.0005351560894906147,unacc
+multi_imv_car_evaluation,Car Evaluation,xgboost,1,0.25200421159155717,0.0004676619645638932,acc
+multi_imv_car_evaluation,Car Evaluation,xgboost,2,0.034145804114513165,0.00025673588694178815,good
+multi_imv_car_evaluation,Car Evaluation,xgboost,3,0.035570307102011714,0.00017540692639495879,vgood
 multi_imv_dry_bean,Dry Bean,lightgbm,0,0.10123831107317424,9.175247629691997e-05,BARBUNYA
 multi_imv_dry_bean,Dry Bean,lightgbm,1,0.03972453064086999,8.714323090048584e-05,BOMBAY
 multi_imv_dry_bean,Dry Bean,lightgbm,2,0.12897550323972534,0.00025299286298587206,CALI
@@ -18,26 +18,26 @@ multi_imv_dry_bean,Dry Bean,lightgbm,3,0.3269316057416155,0.0002429480477735557,
 multi_imv_dry_bean,Dry Bean,lightgbm,4,0.15751689659821694,0.00014366389758735092,HOROZ
 multi_imv_dry_bean,Dry Bean,lightgbm,5,0.16672215605509982,0.00021725095402436433,SEKER
 multi_imv_dry_bean,Dry Bean,lightgbm,6,0.20932752721674902,0.00020622358765494587,SIRA
-multi_imv_dry_bean,Dry Bean,logistic_regression,0,0.10039912313332222,9.496423851472195e-05,BARBUNYA
-multi_imv_dry_bean,Dry Bean,logistic_regression,1,0.03983873889030981,2.2007040397615803e-06,BOMBAY
-multi_imv_dry_bean,Dry Bean,logistic_regression,2,0.1280685043086285,3.8160695749541795e-05,CALI
-multi_imv_dry_bean,Dry Bean,logistic_regression,3,0.3247958102037217,7.62559675572422e-05,DERMASON
-multi_imv_dry_bean,Dry Bean,logistic_regression,4,0.15703817563279082,5.9786121501063584e-05,HOROZ
-multi_imv_dry_bean,Dry Bean,logistic_regression,5,0.16571864340266126,0.0001272709792881247,SEKER
-multi_imv_dry_bean,Dry Bean,logistic_regression,6,0.20660116907044027,6.338935456848254e-05,SIRA
-multi_imv_dry_bean,Dry Bean,xgboost,0,0.10118063059356042,0.00010050768464086724,BARBUNYA
-multi_imv_dry_bean,Dry Bean,xgboost,1,0.039799420287938383,3.065164724540924e-05,BOMBAY
-multi_imv_dry_bean,Dry Bean,xgboost,2,0.12896180672499782,0.00014276740594040854,CALI
-multi_imv_dry_bean,Dry Bean,xgboost,3,0.3274237447129974,0.00017700823685568454,DERMASON
-multi_imv_dry_bean,Dry Bean,xgboost,4,0.157691473560481,9.710003734961449e-05,HOROZ
-multi_imv_dry_bean,Dry Bean,xgboost,5,0.1670691257575078,0.0001281874274189682,SEKER
-multi_imv_dry_bean,Dry Bean,xgboost,6,0.2098017561296941,0.00019669934520663375,SIRA
+multi_imv_dry_bean,Dry Bean,logistic_regression,0,0.10039907600155173,9.494952164708926e-05,BARBUNYA
+multi_imv_dry_bean,Dry Bean,logistic_regression,1,0.039838735981305065,2.1983967561228986e-06,BOMBAY
+multi_imv_dry_bean,Dry Bean,logistic_regression,2,0.12806852034374067,3.816966694175273e-05,CALI
+multi_imv_dry_bean,Dry Bean,logistic_regression,3,0.32479575690455453,7.630687705176509e-05,DERMASON
+multi_imv_dry_bean,Dry Bean,logistic_regression,4,0.15703821574662039,5.978004173081447e-05,HOROZ
+multi_imv_dry_bean,Dry Bean,logistic_regression,5,0.16571848106454726,0.00012719404509325258,SEKER
+multi_imv_dry_bean,Dry Bean,logistic_regression,6,0.20660123594995294,6.335365369947637e-05,SIRA
+multi_imv_dry_bean,Dry Bean,xgboost,0,0.10120708652676133,0.00010502759223468785,BARBUNYA
+multi_imv_dry_bean,Dry Bean,xgboost,1,0.03980280191545863,1.6464714809931007e-05,BOMBAY
+multi_imv_dry_bean,Dry Bean,xgboost,2,0.12898653698828905,0.00011514363499546954,CALI
+multi_imv_dry_bean,Dry Bean,xgboost,3,0.3274437455853515,0.00018718925045459864,DERMASON
+multi_imv_dry_bean,Dry Bean,xgboost,4,0.15769908088423293,7.646170779292514e-05,HOROZ
+multi_imv_dry_bean,Dry Bean,xgboost,5,0.16708180555015206,0.0001325671238461678,SEKER
+multi_imv_dry_bean,Dry Bean,xgboost,6,0.20984731511060617,0.00021439270252597255,SIRA
 multi_imv_nursery,Nursery,lightgbm,0,0.5198478286606268,2.1324745460201335e-07,not_recom
 multi_imv_nursery,Nursery,lightgbm,1,0.49471367837253827,0.00020974722434980122,priority
 multi_imv_nursery,Nursery,lightgbm,2,0.4560651415387601,0.00020373954110999693,spec_prior
-multi_imv_nursery,Nursery,logistic_regression,0,0.5196007701270114,2.2342620292522517e-06,not_recom
-multi_imv_nursery,Nursery,logistic_regression,1,0.30984168748068586,9.999945301588231e-05,priority
-multi_imv_nursery,Nursery,logistic_regression,2,0.27560834044072835,9.759768932877494e-05,spec_prior
-multi_imv_nursery,Nursery,xgboost,0,0.5197867779593951,8.432413438360028e-07,not_recom
-multi_imv_nursery,Nursery,xgboost,1,0.48658919478123186,0.0001794930355523375,priority
-multi_imv_nursery,Nursery,xgboost,2,0.4481423742876232,0.00017359587625426833,spec_prior
+multi_imv_nursery,Nursery,logistic_regression,0,0.5196003494367114,1.770375400372993e-06,not_recom
+multi_imv_nursery,Nursery,logistic_regression,1,0.3098411001251765,9.981986264993476e-05,priority
+multi_imv_nursery,Nursery,logistic_regression,2,0.2756074040043603,9.690034340645336e-05,spec_prior
+multi_imv_nursery,Nursery,xgboost,0,0.5197867779593647,8.432413166673541e-07,not_recom
+multi_imv_nursery,Nursery,xgboost,1,0.4865891947796688,0.0001794930092953221,priority
+multi_imv_nursery,Nursery,xgboost,2,0.4481423743546234,0.00017359586094506656,spec_prior

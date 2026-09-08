@@ -1,4 +1,9 @@
-"""Publication plots built from saved IMV results, without training models."""
+"""Shared publication styles, panel layouts, PDF exports and saved-result plots.
+
+Use configure_plotting() for the base font/palette, or rc_params() inside
+mpl.rc_context() for the multiclass and SHAP panel style. Keeping these profiles
+separate preserves each figure family's layout without leaking style changes.
+"""
 
 from dataclasses import dataclass
 from pathlib import Path
@@ -9,8 +14,10 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap, Normalize
 from matplotlib.ticker import MultipleLocator
+from matplotlib.transforms import Bbox
 import numpy as np
 import pandas as pd
+import seaborn as sns
 
 
 @dataclass(frozen=True)
@@ -97,6 +104,7 @@ def _installed_font_families(candidates=FONT_CANDIDATES):
 
 
 FONT_FAMILY = _installed_font_families()
+GRID_LINESTYLE = "--"
 PAPER_STYLE = {
     "font.family": FONT_FAMILY,
     "font.sans-serif": FONT_FAMILY,
@@ -107,11 +115,58 @@ PAPER_STYLE = {
     "xtick.labelsize": 10,
     "ytick.labelsize": 10,
     "axes.linewidth": 0.7,
+    "grid.linestyle": GRID_LINESTYLE,
     "figure.facecolor": "white",
     "axes.facecolor": "white",
     "pdf.fonttype": 42,
     "image.cmap": COLORMAP,
 }
+
+# Panel geometry and styling for multiclass and SHAP figures. These are layered
+# over PAPER_STYLE by rc_params(), not applied when this module is imported.
+PANEL_WIDTH = 5.4
+PANEL_HEIGHT = 4.6
+COMPACT_PANEL_HEIGHT = 3.4   # shorter bar-chart rows in multi-dataset overviews
+FIGURE_DPI = 110              # on-screen only; publication exports are PDF
+
+PALETTE = COLORMAP
+COLORS = PALETTE_COLORS
+EDGE_COLOR = "#1f2a30"
+EDGE_WIDTH = 0.6
+BAR_EDGE_COLOR = "k"
+GRID_COLOR = "#d7dcdf"
+AXIS_COLOR = "#3f484d"
+TEXT_COLOR = "#1f2a30"
+ERROR_COLOR = "k"
+CAPSIZE = 3
+BAR_LABEL_FORMAT = ".3f"
+BAR_LABEL_PADDING = 4
+BAR_LIMIT_PADDING = 0.18
+COLORBAR_WIDTH = 0.08       # fraction of the heatmap's width; no subplot resizing
+COLORBAR_PADDING = 0.04
+TIGHT_LAYOUT_PAD = 1.08
+
+BASE_FONT_SIZE = PAPER_STYLE["font.size"]
+TICK_FONT_SIZE = PAPER_STYLE["xtick.labelsize"]
+LABEL_FONT_SIZE = PAPER_STYLE["axes.labelsize"]
+TITLE_FONT_SIZE = PAPER_STYLE["axes.titlesize"]
+SUPTITLE_FONT_SIZE = 13
+LEGEND_FONT_SIZE = 9
+ANNOTATION_FONT_SIZE = 9
+MULTICLASS_ANNOTATION_FONT_SIZE = 10
+
+TITLE_LOCATION = "left"
+BODY_FONT_WEIGHT = "normal"
+LABEL_FONT_WEIGHT = "medium"
+TITLE_FONT_WEIGHT = "bold"
+SUPTITLE_FONT_WEIGHT = "bold"
+
+TITLE_KWARGS = {"fontsize": TITLE_FONT_SIZE, "fontweight": TITLE_FONT_WEIGHT,
+                "color": TEXT_COLOR}
+SUPTITLE_KWARGS = {"fontsize": SUPTITLE_FONT_SIZE, "fontweight": SUPTITLE_FONT_WEIGHT,
+                   "color": TEXT_COLOR}
+LABEL_KWARGS = {"fontsize": LABEL_FONT_SIZE, "fontweight": LABEL_FONT_WEIGHT,
+                "color": TEXT_COLOR}
 
 
 def spectral_colors(count):
@@ -129,22 +184,321 @@ def configure_plotting():
     mpl.rcParams["axes.prop_cycle"] = mpl.cycler(color=spectral_colors(10))
 
 
-def plot_ablation_matrix(matrix, *, figsize=(6, 6), title="Ablation IMV matrix",
-                         cmap=COLORMAP):
+def rc_params():
+    """Panel style as an rcParams mapping, for use inside mpl.rc_context()."""
+    return {
+        **PAPER_STYLE,
+        "axes.prop_cycle": plt.cycler(color=spectral_colors(10)),
+        "figure.figsize": (PANEL_WIDTH, PANEL_HEIGHT),
+        "figure.dpi": FIGURE_DPI,
+        "figure.facecolor": "white",
+        "savefig.facecolor": "white",
+        "font.family": FONT_FAMILY,
+        "font.size": BASE_FONT_SIZE,
+        "font.weight": BODY_FONT_WEIGHT,
+        "text.color": TEXT_COLOR,
+        "axes.titlesize": TITLE_FONT_SIZE,
+        "axes.titleweight": TITLE_FONT_WEIGHT,
+        "axes.titlelocation": TITLE_LOCATION,
+        "axes.labelsize": LABEL_FONT_SIZE,
+        "axes.labelweight": LABEL_FONT_WEIGHT,
+        "axes.labelcolor": TEXT_COLOR,
+        "axes.edgecolor": AXIS_COLOR,
+        "axes.linewidth": EDGE_WIDTH,
+        "axes.facecolor": "white",
+        "axes.spines.top": False,
+        "axes.spines.right": False,
+        "axes.grid": True,
+        "axes.grid.axis": "y",
+        "axes.axisbelow": True,
+        "grid.color": GRID_COLOR,
+        "grid.linestyle": GRID_LINESTYLE,
+        "grid.linewidth": 0.6,
+        "xtick.labelsize": TICK_FONT_SIZE,
+        "ytick.labelsize": TICK_FONT_SIZE,
+        "xtick.color": AXIS_COLOR,
+        "ytick.color": AXIS_COLOR,
+        "xtick.labelcolor": TEXT_COLOR,
+        "ytick.labelcolor": TEXT_COLOR,
+        "legend.fontsize": LEGEND_FONT_SIZE,
+        "legend.frameon": False,
+    }
+
+
+def apply(**overrides):
+    """Install the panel style globally; keyword overrides are applied on top."""
+    settings = {**rc_params(), **overrides}
+    plt.rcParams.update(settings)
+    return settings
+
+
+def label_panels(axes, *, start=0):
+    """Replace axes titles with bold, left-aligned letters in row-major order.
+
+    Pass the data axes explicitly, not figure.axes, to exclude colourbars.
+    Axis labels, legends, annotations and plotted values are left unchanged.
+    """
+    panels = np.asarray(axes, dtype=object).ravel()
+    if not isinstance(start, int) or start < 0 or start + len(panels) > 26:
+        raise ValueError("panel labels must fall between a. and z.")
+    for index, axis in enumerate(panels, start=start):
+        axis.set_title("", loc="center")
+        axis.set_title("", loc="right")
+        axis.set_title(f"{chr(97 + index)}.", loc="left", fontweight="bold", pad=8)
+
+
+def figure_size(n_rows=1, n_cols=1, *, width=PANEL_WIDTH, height=PANEL_HEIGHT):
+    """Figure size for a grid of panels, in inches."""
+    if n_rows < 1 or n_cols < 1:
+        raise ValueError("a figure needs at least one row and one column")
+    return (n_cols * width, n_rows * height)
+
+
+def categorical_colors(n_colors):
+    """`n_colors` well-separated colours drawn from the shared palette."""
+    return sns.color_palette(PALETTE, n_colors)
+
+
+def sequential_cmap():
+    """The shared palette as a continuous colormap, for heatmaps and ramps."""
+    return sns.color_palette(PALETTE, as_cmap=True)
+
+
+def bar_style(n_bars, *, colors=None):
+    """Keyword arguments for a categorical bar chart with error bars."""
+    return {
+        "color": categorical_colors(n_bars) if colors is None else colors,
+        "edgecolor": BAR_EDGE_COLOR,
+        "linewidth": EDGE_WIDTH,
+        "capsize": CAPSIZE,
+        "error_kw": {"ecolor": ERROR_COLOR, "elinewidth": EDGE_WIDTH,
+                     "capthick": EDGE_WIDTH},
+    }
+
+
+def annotate_bars(axis, bars, *, fontsize=ANNOTATION_FONT_SIZE):
+    """Label vertical bar values beyond their error caps, including negatives."""
+    if bars.orientation != "vertical":
+        raise ValueError("annotate_bars expects vertical bars")
+    segments = []
+    if bars.errorbar is not None and bars.errorbar.has_yerr:
+        segments = bars.errorbar.lines[2][-1].get_segments()
+    annotations = []
+    for index, rectangle in enumerate(bars.patches):
+        value = rectangle.get_height()
+        if not np.isfinite(value):
+            continue
+        positive = value >= 0
+        endpoint = rectangle.get_y() + value
+        if index < len(segments) and len(segments[index]):
+            endpoints = segments[index][:, 1]
+            endpoint = endpoints.max() if positive else endpoints.min()
+        label = format(value, BAR_LABEL_FORMAT)
+        if label == "-0.000":
+            label = "0.000"
+        annotation = axis.annotate(
+            label, (rectangle.get_x() + rectangle.get_width() / 2, endpoint),
+            textcoords="offset points", xytext=(0, BAR_LABEL_PADDING if positive else -BAR_LABEL_PADDING),
+            ha="center", va="bottom" if positive else "top",
+            fontsize=fontsize, fontweight=BODY_FONT_WEIGHT, color=TEXT_COLOR,
+        )
+        annotation.set_gid("bar-value")
+        annotations.append(annotation)
+    return annotations
+
+
+def plot_bars(axis, x, values, *, yerr=None, colors=None, width=0.8,
+              annotation_fontsize=ANNOTATION_FONT_SIZE):
+    """Draw black-edged, annotated bars with shared error-bar and axis styling.
+
+    Call set_bar_limits() after drawing the whole row to reserve annotation room
+    across shared y axes. Passing colors preserves any meaningful sign encoding.
+    """
+    values = np.asarray(values, dtype=float)
+    if values.ndim != 1:
+        raise ValueError("bar values must be one-dimensional")
+    bars = axis.bar(x, values, yerr=yerr, width=width,
+                    **bar_style(len(values), colors=colors))
+    annotate_bars(axis, bars, fontsize=annotation_fontsize)
+    axis.set_axisbelow(True)
+    axis.grid(False, axis="x")
+    axis.grid(True, axis="y", color=GRID_COLOR, linestyle=GRID_LINESTYLE, linewidth=EDGE_WIDTH)
+    axis.spines[["top", "right"]].set_visible(False)
+    axis.axhline(0, color=AXIS_COLOR, linewidth=EDGE_WIDTH)
+    return bars
+
+
+def set_bar_limits(axes, *, padding=BAR_LIMIT_PADDING):
+    """Add common headroom beyond bar/error extents without moving any axes.
+
+    Shared y-axis groups are handled together. Negative error extents remain
+    visible; an all-zero group still gets a finite, non-degenerate scale.
+    """
+    if not np.isfinite(padding) or padding <= 0:
+        raise ValueError("bar-limit padding must be finite and positive")
+    visited = set()
+    for axis in np.asarray(axes, dtype=object).ravel():
+        if axis in visited:
+            continue
+        group = axis.get_shared_y_axes().get_siblings(axis)
+        visited.update(group)
+        bounds = np.array([sibling.dataLim.intervaly for sibling in group])
+        bounds = bounds[np.isfinite(bounds).all(axis=1)]
+        if not len(bounds):
+            continue
+        low, high = min(0, bounds[:, 0].min()), max(0, bounds[:, 1].max())
+        # axhline(0) can leave a few ulps below zero after a canvas draw. Do not
+        # give an otherwise positive chart a full negative annotation margin.
+        if low < 0 and abs(low) <= 8 * np.finfo(float).eps * max(abs(low), abs(high)):
+            low = 0.0
+        margin = padding * (high - low if high > low else 1.0)
+        axis.set_ylim(low - margin if low < 0 else 0, high + margin)
+
+
+def style_heatmap_axes(axis, *, xlabels=None, ylabels=None):
+    """Frame a heatmap in black and repeat its class labels on opposing edges.
+
+    Existing tick locations are retained, supporting both seaborn's cell centres
+    and explicitly positioned meshes. Apply after setting ticks and labels.
+    """
+    if xlabels is not None:
+        axis.set_xticks(axis.get_xticks(), labels=xlabels)
+    if ylabels is not None:
+        axis.set_yticks(axis.get_yticks(), labels=ylabels)
+    axis.grid(False)
+    axis.tick_params(axis="both", which="major", top=True, bottom=True,
+                     left=True, right=True, labeltop=True, labelbottom=True,
+                     labelleft=True, labelright=True, direction="out", length=3,
+                     width=EDGE_WIDTH, color="k", labelsize=TICK_FONT_SIZE)
+    for tick in axis.xaxis.get_major_ticks():
+        for label, alignment in ((tick.label1, "right"), (tick.label2, "left")):
+            label.set_rotation(45)
+            label.set_rotation_mode("anchor")
+            label.set_horizontalalignment(alignment)
+    for tick in axis.yaxis.get_major_ticks():
+        tick.label1.set_rotation(0)
+        tick.label2.set_rotation(0)
+    for spine in axis.spines.values():
+        spine.set_visible(True)
+        spine.set_edgecolor("k")
+        spine.set_linewidth(EDGE_WIDTH)
+
+
+def add_heatmap_colorbar(mappable, axis, label, *, width=COLORBAR_WIDTH, pad=COLORBAR_PADDING):
+    """Add a full-height vector colourbar, clearing any mirrored class labels."""
+    if not np.isfinite(width) or width <= 0 or not np.isfinite(pad) or pad < 0:
+        raise ValueError("colourbar width must be positive and padding nonnegative")
+    colorbar_axis = axis.inset_axes([1 + pad, 0, width, 1])
+
+    def locate_colorbar(child, renderer):
+        # Measure on each draw: tight_layout changes axes widths, but text sizes
+        # stay fixed. A fixed fractional gap would collide with long class names.
+        bounds = axis.get_window_extent(renderer)
+        right_labels = [tick.label2 for tick in axis.yaxis.get_major_ticks()
+                        if tick.label2.get_visible()]
+        decorations = right_labels + axis.get_xticklabels() if right_labels else []
+        right = max([bounds.x1] + [text.get_window_extent(renderer).x1
+                                  for text in decorations if text.get_visible()])
+        return Bbox.from_bounds(right + pad * bounds.width, bounds.y0,
+                                width * bounds.width, bounds.height).transformed(
+                                    axis.figure.transFigure.inverted())
+
+    colorbar_axis.set_axes_locator(locate_colorbar)
+    colorbar = axis.figure.colorbar(
+        mappable, cax=colorbar_axis, orientation="vertical",
+    )
+    colorbar.set_label(label, **LABEL_KWARGS)
+    colorbar.ax.tick_params(labelsize=TICK_FONT_SIZE, width=EDGE_WIDTH, length=3, colors=AXIS_COLOR)
+    colorbar.outline.set_visible(True)
+    colorbar.outline.set_edgecolor("k")
+    colorbar.outline.set_linewidth(EDGE_WIDTH)
+    if colorbar.solids is not None:
+        colorbar.solids.set_rasterized(False)
+        colorbar.solids.set_edgecolor("face")
+    return colorbar
+
+
+def heatmap_style(n_classes, *, annotation_fontsize=MULTICLASS_ANNOTATION_FONT_SIZE):
+    """Keyword arguments for an annotated square heatmap of `n_classes` classes.
+
+    Larger matrices lose a decimal, not font size, so seven-class annotations
+    remain legible at manuscript scale.
+    """
+    crowded = n_classes > 5
+    return {
+        "cmap": sequential_cmap(),
+        "annot": True,
+        "fmt": ".2f" if crowded else ".3f",
+        "annot_kws": {"fontsize": annotation_fontsize,
+                      "fontweight": BODY_FONT_WEIGHT},
+        "linewidths": EDGE_WIDTH,
+        "linecolor": EDGE_COLOR,
+        "square": True,
+    }
+
+
+def plot_multiclass_overview(results, model_names, *, figsize=None):
+    """Stack dataset blocks: pairwise heatmaps above one-vs-rest bars.
+
+    Columns retain model order. Each dataset keeps its own shared heatmap scale,
+    including negative IMV, and larger groups use compact rows for the supplement.
+    Values and seed standard deviations are read directly from the saved results.
+    """
+    results, model_names = tuple(results), tuple(model_names)
+    if not results or not model_names:
+        raise ValueError("multiclass figures need at least one dataset and model")
+    if 2 * len(results) * len(model_names) > 26:
+        raise ValueError("multiclass panel labels must fall between a. and z.")
+    if figsize is None:
+        height = PANEL_HEIGHT if len(results) == 1 else COMPACT_PANEL_HEIGHT
+        figsize = figure_size(2 * len(results), len(model_names), height=height)
+    figure = plt.figure(figsize=figsize)
+    grid = figure.add_gridspec(2 * len(results), len(model_names),
+                               height_ratios=[1, 0.85] * len(results))
+    axes = np.empty((2 * len(results), len(model_names)), dtype=object)
+    for block, result in enumerate(results):
+        row = 2 * block
+        labels = result["class_names"]
+        matrices = [result["pairwise"][name].to_numpy(dtype=float) for name in model_names]
+        low = min(0.0, min(float(np.nanmin(matrix)) for matrix in matrices))
+        high = max(float(np.nanmax(matrix)) for matrix in matrices)
+        style = {**heatmap_style(len(labels)), "square": False}
+        for column, name in enumerate(model_names):
+            heat = figure.add_subplot(grid[row, column])
+            bars = figure.add_subplot(grid[row + 1, column])
+            axes[row, column], axes[row + 1, column] = heat, bars
+            sns.heatmap(result["pairwise"][name], ax=heat, vmin=low, vmax=high,
+                        cbar=False, **style)
+            style_heatmap_axes(heat, xlabels=labels, ylabels=labels)
+            part = result["ova_summary"].loc[result["ova_summary"].model == name].sort_values("class")
+            plot_bars(bars, labels, part["mean"], yerr=part["std"].fillna(0),
+                      annotation_fontsize=MULTICLASS_ANNOTATION_FONT_SIZE)
+            bars.set_xticks(range(len(labels)), labels, rotation=45, ha="right")
+        add_heatmap_colorbar(axes[row, 0].collections[0], axes[row, -1], "Pairwise IMV")
+        axes[row + 1, 0].set_ylabel(f"One-vs-rest IMV (mean of {result['n_seeds']} seeds)",
+                                    **LABEL_KWARGS)
+        set_bar_limits(axes[row + 1])
+    label_panels(axes)
+    return figure
+
+
+def plot_ablation_matrix(matrix, *, figsize=(6, 6), cmap=COLORMAP):
     """Style imvpy's heatmap without changing its values or normalization."""
     from imvpy.utils import plot_ablation_matrix as _imvpy_ablation_matrix
 
     # The pinned imvpy plot helper hardcodes its palette and has no cmap argument.
     with mpl.rc_context(PAPER_STYLE):
-        fig, ax = _imvpy_ablation_matrix(matrix, figsize=figsize, title=title)
+        fig, ax = _imvpy_ablation_matrix(matrix, figsize=figsize, title="")
+        label_panels(ax)
         mesh = ax.collections[0]
         mesh.set_cmap(cmap)
         for annotation, value in zip(ax.texts, np.asarray(matrix).flat):
             rgb = mesh.cmap(mesh.norm(value))[:3]
             luminance = np.dot(rgb, [0.2126, 0.7152, 0.0722])
             annotation.set_color("white" if luminance < 0.48 else "#202020")
-        mesh.colorbar.solids.set_rasterized(False)
-        mesh.colorbar.solids.set_edgecolor("face")
+        colorbar_label = mesh.colorbar.ax.get_ylabel()
+        mesh.colorbar.remove()
+        add_heatmap_colorbar(mesh, ax, colorbar_label or "Directional IMV")
     return fig, ax
 
 
@@ -297,15 +651,11 @@ def plot_ablation_overview(results, *, figsize=(15.5, 9.0)):
     limit = max(0.05, np.ceil(magnitude / 0.05) * 0.05)
     norm = Normalize(vmin=-limit, vmax=limit)
     cmap = mpl.colormaps[COLORMAP]
-    lower = min(float((r.null_summary["mean"] - r.null_summary["std"]).min()) for r in results)
-    upper = max(float((r.null_summary["mean"] + r.null_summary["std"]).max()) for r in results)
-    y_limits = (min(0.0, lower - 0.04), max(1.04, upper + 0.04))
 
     with mpl.rc_context(PAPER_STYLE):
         fig = plt.figure(figsize=figsize)
         grid = fig.add_gridspec(
-            2, 4, width_ratios=[1, 1, 1, 0.045], height_ratios=[1, 0.78],
-            left=0.073, right=0.954, bottom=0.21, top=0.91, wspace=0.72, hspace=0.83,
+            2, 3, height_ratios=[1, 0.78],
         )
         axes = np.empty((2, 3), dtype=object)
         for column, result in enumerate(results):
@@ -336,52 +686,51 @@ def plot_ablation_overview(results, *, figsize=(15.5, 9.0)):
             heatmap.set_xlabel("Basic model (column)")
             if column == 0:
                 heatmap.set_ylabel("Enhanced model (row)")
-            heatmap.set_title(f"({chr(97 + column)})  {example.title}", pad=26)
-            heatmap.text(0.5, 1.045, example.task, transform=heatmap.transAxes,
-                         ha="center", fontsize=10, color="0.3")
             for spine in heatmap.spines.values():
                 spine.set_visible(False)
 
             bars = fig.add_subplot(grid[1, column], sharey=axes[1, 0] if column else None)
             axes[1, column] = bars
-            bars.bar(x, result.null_summary["mean"], yerr=result.null_summary["std"],
-                     color=spectral_colors(len(labels)), width=0.73, capsize=3,
-                     error_kw={"elinewidth": 0.9, "capthick": 0.9, "ecolor": "#333333"})
+            plot_bars(bars, x, result.null_summary["mean"], yerr=result.null_summary["std"],
+                      colors=spectral_colors(len(labels)), width=0.73)
             bars.set_xticks(x, labels, rotation=42, ha="right", rotation_mode="anchor")
-            bars.set_ylim(*y_limits)
             bars.set_xlim(-0.6, len(labels) - 0.4)
             bars.yaxis.set_major_locator(MultipleLocator(0.2))
-            bars.set_axisbelow(True)
-            bars.grid(axis="y", linestyle="-.", color="0.72", linewidth=0.6)
-            bars.axhline(0, linewidth=0.7, color="0.25")
-            bars.set_title(f"({chr(100 + column)})  Full and ablated models", pad=10)
             bars.set_xlabel("Model variant")
             if column == 0:
                 bars.set_ylabel("Mean IMV versus 0.5 baseline")
             else:
                 bars.tick_params(labelleft=False)
-            bars.spines[["top", "right"]].set_visible(False)
 
-        colorbar = fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=cmap),
-                               cax=fig.add_subplot(grid[0, 3]))
-        colorbar.solids.set_rasterized(False)
-        colorbar.solids.set_edgecolor("face")
-        colorbar.set_label("Mean directional IMV", fontsize=10)
-        colorbar.outline.set_visible(False)
+        set_bar_limits(axes[1])
+        add_heatmap_colorbar(axes[0, 0].collections[0], axes[0, -1], "Mean directional IMV")
         fig.align_xlabels(axes[0, :])
         fig.align_xlabels(axes[1, :])
-        fig.text(
-            0.5, 0.028,
-            f"Cells: row model relative to column model.  "
-            f"Bars: constant p = 0.5 baseline.  "
-            f"Whiskers: +/- 1 SD across {len(results[0].seeds)} seeds.",
-            ha="center", fontsize=10,
-        )
+        label_panels(axes)
     return fig, axes
 
 
+def apply_tight_layout(figure):
+    """Fit panels and inset colourbars, reserving room for bottom figure legends.
+
+    Matplotlib includes inset colourbars in their parent axes' tight bounds, but
+    not figure-level legends. Measure those before fitting the subplot area.
+    """
+    figure.canvas.draw()
+    renderer = figure.canvas.get_renderer()
+    legends = [legend for legend in figure.legends
+               if legend.get_visible() and legend.get_in_layout()]
+    bottom = 0.0
+    if legends:
+        bottom = max(legend.get_window_extent(renderer).transformed(
+            figure.transFigure.inverted()).y1 for legend in legends)
+        bottom += TIGHT_LAYOUT_PAD * mpl.rcParams["font.size"] / 72 / figure.get_figheight()
+    figure.tight_layout(pad=TIGHT_LAYOUT_PAD, rect=(0, bottom, 1, 1))
+    return figure
+
+
 def save_publication_figure(figure, destination, *, dpi=800):
-    """Write only a PDF, retaining the format-to-path mapping notebooks expect.
+    """Apply tight layout and write only a PDF with the expected path mapping.
 
     imvpy's save_figure always writes three formats, so use Matplotlib directly
     for export; all IMV calculations still use imvpy.
@@ -398,5 +747,9 @@ def save_publication_figure(figure, destination, *, dpi=800):
     # about the figure, and they would otherwise land in every notebook output.
     logging.getLogger("fontTools").setLevel(logging.ERROR)
     with mpl.rc_context(PAPER_STYLE):
+        apply_tight_layout(figure)
         figure.savefig(path, format="pdf", dpi=dpi, bbox_inches="tight")
+    # Retire only this figure's legacy exports, and only after the PDF succeeds.
+    for suffix in (".png", ".svg"):
+        path.with_suffix(suffix).unlink(missing_ok=True)
     return {"pdf": path}

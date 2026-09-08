@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import matplotlib
 matplotlib.use("Agg")
@@ -15,6 +16,7 @@ import pandas as pd
 from PIL import Image
 from imvpy import imv_from_likelihoods
 
+from src.empirical.plotter import figure_utils
 from src.empirical.plotter.figure_utils import (
     COLORMAP, AblationExample, configure_plotting, load_ablation_results,
     plot_ablation_matrix, plot_ablation_overview, save_publication_figure, spectral_colors,
@@ -35,10 +37,13 @@ def without_imvpy(name, *args, **kwargs):
 
 builtins.__import__ = without_imvpy
 from src.empirical.plotter.figure_utils import COLORMAP, configure_plotting
-from src.empirical.plotter import shared_style
+from src.empirical.plotter import figure_utils
 configure_plotting()
+figure_utils.apply()
+figure_utils.bar_style(3)
+figure_utils.heatmap_style(3)
 assert 'imvpy' not in sys.modules
-assert shared_style.PALETTE == COLORMAP
+assert figure_utils.PALETTE == COLORMAP
 """
         result = subprocess.run([sys.executable, "-c", script],
                                 cwd=Path(__file__).resolve().parents[1],
@@ -119,6 +124,12 @@ assert shared_style.PALETTE == COLORMAP
         self.addCleanup(plt.close, fig)
         self.assertEqual(axes.shape, (2, 3))
         fig.canvas.draw()
+        self.assertFalse(fig.texts)
+        for index, axis in enumerate(axes.flat):
+            self.assertEqual(axis.get_title(loc="left"), f"{chr(97 + index)}.")
+            self.assertEqual(axis._left_title.get_fontweight(), "bold")
+            self.assertEqual(axis.get_title(loc="center"), "")
+            self.assertEqual(axis.get_title(loc="right"), "")
         for column in range(3):
             heatmap = axes[0, column]
             mesh = heatmap.collections[0]
@@ -140,6 +151,17 @@ assert shared_style.PALETTE == COLORMAP
                 [bar.get_facecolor() for bar in axes[1, column].patches],
                 spectral_colors(len(result.example.variants)),
             )
+            for bar in axes[1, column].patches:
+                np.testing.assert_array_equal(bar.get_edgecolor(), [0, 0, 0, 1])
+            annotations = [text for text in axes[1, column].texts if text.get_gid() == "bar-value"]
+            self.assertEqual(len(annotations), len(result.example.variants))
+        grid = axes[0, 0].get_subplotspec().get_gridspec()
+        self.assertFalse(grid.locally_modified_subplot_params())
+        self.assertEqual(grid.get_geometry(), (2, 3))
+        self.assertEqual(grid.get_height_ratios(), [1, 0.78])
+        colorbar = axes[0, 0].collections[0].colorbar
+        self.assertAlmostEqual(colorbar.ax.get_position().y0, axes[0, -1].get_position().y0)
+        self.assertAlmostEqual(colorbar.ax.get_position().height, axes[0, -1].get_position().height)
 
     def test_exports_only_pdf_without_raster_heatmaps(self):
         result = self.load()
@@ -151,6 +173,24 @@ assert shared_style.PALETTE == COLORMAP
                 self.assertEqual(paths, {"pdf": self.root / "overview.pdf"})
                 self.assertNotIn(b"/Subtype /Image", paths["pdf"].read_bytes())
         self.assertEqual(list(self.root.glob("overview.*")), [self.root / "overview.pdf"])
+
+    def test_pdf_export_removes_only_its_own_legacy_formats_after_success(self):
+        figure, _ = plt.subplots()
+        self.addCleanup(plt.close, figure)
+        for name in ("overview.png", "overview.svg", "unrelated.png"):
+            (self.root / name).write_bytes(b"old figure")
+        with patch.object(figure, "savefig", side_effect=OSError("export failed")):
+            with self.assertRaises(OSError):
+                save_publication_figure(figure, self.root / "overview")
+        self.assertTrue((self.root / "overview.png").exists())
+        self.assertTrue((self.root / "overview.svg").exists())
+        with patch.object(figure_utils, "apply_tight_layout",
+                          wraps=figure_utils.apply_tight_layout) as layout:
+            save_publication_figure(figure, self.root / "overview")
+            layout.assert_called_once_with(figure)
+        self.assertFalse((self.root / "overview.png").exists())
+        self.assertFalse((self.root / "overview.svg").exists())
+        self.assertTrue((self.root / "unrelated.png").exists())
 
     def test_configure_plotting_sets_shared_defaults(self):
         with matplotlib.rc_context():
@@ -165,6 +205,9 @@ assert shared_style.PALETTE == COLORMAP
         matrix = self.load().pairwise_mean
         fig, ax = plot_ablation_matrix(matrix)
         self.addCleanup(plt.close, fig)
+        self.assertEqual(ax.get_title(loc="left"), "a.")
+        self.assertEqual(ax._left_title.get_fontweight(), "bold")
+        self.assertEqual(ax.get_title(loc="center"), "")
         mesh = ax.collections[0]
         self.assertEqual(mesh.cmap.name, COLORMAP)
         self.assertEqual(ax.title.get_fontfamily()[0], "Helvetica")
@@ -200,6 +243,74 @@ assert shared_style.PALETTE == COLORMAP
                 py = round((bbox.y1 - y) / bbox.height * height)
                 expected = np.array(mesh.cmap(mesh.norm(value))[:3]) * 255
                 np.testing.assert_allclose(pixels[py, px], expected, atol=3)
+
+
+class PanelStyleTests(unittest.TestCase):
+    def test_labels_are_bold_row_major_and_do_not_label_colorbars(self):
+        fig, axes = plt.subplots(2, 3)
+        self.addCleanup(plt.close, fig)
+        for axis in axes.flat:
+            axis.set_title("Old title", loc="center")
+            axis.set_title("Old right title", loc="right")
+            axis.set_xlabel("X label")
+            axis.set_ylabel("Y label")
+        mesh = axes[0, 0].imshow([[0, 1], [1, 0]])
+        colorbar = fig.colorbar(mesh, ax=axes[0, 0])
+        figure_utils.label_panels(axes)
+        for index, axis in enumerate(axes.flat):
+            self.assertEqual(axis.get_title(loc="left"), f"{chr(97 + index)}.")
+            self.assertEqual(axis._left_title.get_fontweight(), "bold")
+            self.assertEqual(axis.get_title(loc="center"), "")
+            self.assertEqual(axis.get_title(loc="right"), "")
+            self.assertEqual(axis.get_xlabel(), "X label")
+            self.assertEqual(axis.get_ylabel(), "Y label")
+        self.assertEqual(colorbar.ax.get_title(loc="left"), "")
+        np.testing.assert_array_equal(mesh.get_array(), [[0, 1], [1, 0]])
+        figure_utils.label_panels(axes[0, 0], start=1)
+        self.assertEqual(axes[0, 0].get_title(loc="left"), "b.")
+        for start in (-1, 26, 0.5):
+            with self.assertRaises(ValueError):
+                figure_utils.label_panels(axes[0, 0], start=start)
+
+    def test_panel_style_uses_canonical_font_and_palette(self):
+        with matplotlib.rc_context():
+            figure_utils.apply()
+            for key in ("font.family", "font.sans-serif", "image.cmap", "pdf.fonttype"):
+                self.assertEqual(matplotlib.rcParams[key], figure_utils.PAPER_STYLE[key])
+            self.assertEqual(figure_utils.PALETTE, COLORMAP)
+            self.assertEqual(figure_utils.COLORS, figure_utils.PALETTE_COLORS)
+            self.assertEqual(figure_utils.heatmap_style(3)["cmap"].name, COLORMAP)
+            self.assertEqual(len(figure_utils.bar_style(3)["color"]), 3)
+
+    def test_panel_geometry_is_preserved(self):
+        self.assertEqual(figure_utils.figure_size(2, 3), (3 * 5.4, 2 * 4.6))
+        self.assertEqual(figure_utils.figure_size(2, 3, width=4, height=2), (12, 4))
+        for rows, columns in ((0, 3), (2, 0)):
+            with self.assertRaises(ValueError):
+                figure_utils.figure_size(rows, columns)
+
+    def test_base_and_panel_styles_remain_distinct_and_scoped(self):
+        with matplotlib.rc_context({"axes.grid": False}):
+            configure_plotting()
+            self.assertFalse(matplotlib.rcParams["axes.grid"])
+            self.assertEqual(matplotlib.rcParams["axes.linewidth"], 0.7)
+            with matplotlib.rc_context(figure_utils.rc_params()):
+                self.assertTrue(matplotlib.rcParams["axes.grid"])
+                self.assertEqual(matplotlib.rcParams["axes.linewidth"], 0.6)
+                self.assertEqual(matplotlib.rcParams["figure.figsize"], [5.4, 4.6])
+            self.assertFalse(matplotlib.rcParams["axes.grid"])
+            self.assertEqual(matplotlib.rcParams["axes.linewidth"], 0.7)
+
+    def test_panel_overrides_and_crowded_annotations(self):
+        with matplotlib.rc_context():
+            settings = figure_utils.apply(**{"axes.grid": False, "font.size": 15})
+            self.assertFalse(matplotlib.rcParams["axes.grid"])
+            self.assertEqual(settings["font.size"], 15)
+        small, large = figure_utils.heatmap_style(5), figure_utils.heatmap_style(6)
+        self.assertEqual(small["fmt"], ".3f")
+        self.assertEqual(large["fmt"], ".2f")
+        self.assertEqual(large["annot_kws"]["fontsize"], small["annot_kws"]["fontsize"])
+        self.assertEqual(large["annot_kws"]["fontsize"], figure_utils.MULTICLASS_ANNOTATION_FONT_SIZE)
 
 
 if __name__ == "__main__":

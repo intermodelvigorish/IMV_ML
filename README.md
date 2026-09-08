@@ -28,7 +28,7 @@ All commands below are intended to be run from the repository root.
 | [src/empirical/multi_imv/](src/empirical/multi_imv/) | Multiclass IMV, classification metrics, and tables. |
 | [src/empirical/shap_imv/](src/empirical/shap_imv/) | SHAP-IMV and top-five feature-selection comparisons. |
 | [src/empirical/gnn/](src/empirical/gnn/) | Graph-classification training, checkpoints, and epoch-level metrics. |
-| [src/empirical/plotter/](src/empirical/plotter/) | One combined results-only notebook and shared plotting helpers. |
+| [src/empirical/plotter/](src/empirical/plotter/) | One results-only notebook ordered SHAP, Multi-IMV, Ablate-IMV, then GNNs, plus shared plotting helpers. |
 | [src/simulations/](src/simulations/) | Synthetic examples and the vanilla IMV complexity benchmark. |
 | [output/](output/) | Saved PDF figures, empirical metric tables, and benchmark outputs. |
 | [tests/](tests/) | Plotting, result-validation, training-restart, and source-layout checks. |
@@ -60,18 +60,21 @@ tools, including `find`, `sort`, and `realpath`, plus `flock` and `setsid`.
 The current development checks use Python 3.12.
 
 Create an isolated environment outside the repository, install the dependencies,
-and register its `python3` notebook kernel:
+and register its project-specific notebook kernel:
 
 ```bash
 python3 -m venv "$HOME/.venvs/imv-ml"
 source "$HOME/.venvs/imv-ml/bin/activate"
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
-python -m ipykernel install --sys-prefix --name python3 --display-name "Python (IMV_ML)"
+python -m ipykernel install --sys-prefix --name imv-ml --display-name "Python (IMV_ML)"
 ```
 
 Keep this environment active when running the commands below. Registering the
-kernel ensures the notebooks use the same environment as the installed packages.
+kernel lets the runner explicitly select the environment containing the installed
+packages. Use `python -m nbconvert`, not a potentially unrelated `jupyter`
+executable from Anaconda base. For interactive notebooks, launch Jupyter from
+this environment and select **Python (IMV_ML)**.
 
 [`requirements.txt`](requirements.txt) installs `imvpy[deep-learning]` from commit
 `de7fe7a80300ae849fcdc37519651509b380a8d1`, rather than an unpinned latest release.
@@ -120,14 +123,40 @@ explicit mode to avoid accidentally starting a destructive, expensive rerun.
 ### Rebuild Publication Figures Only
 
 ```bash
-jupyter nbconvert --execute --to notebook --inplace --ExecutePreprocessor.timeout=-1 src/empirical/plotter/plotter.ipynb
+python -m nbconvert --execute --to notebook --inplace --ExecutePreprocessor.timeout=-1 --ExecutePreprocessor.kernel_name=imv-ml src/empirical/plotter/plotter.ipynb
 ```
 
-Rebuilds the ablation overview, GNN mean/range and individual-seed figures,
-and three multiclass figures and combined metric tables. This notebook does
-not download datasets or train models. It requires completed ablation, GNN,
-and multiclass results, including files in the artifact cache; the committed
+Rebuilds the combined 3 x 3 SHAP ranking (`figure_2.pdf`), two multiclass figures,
+the ablation overview, and GNN mean/range and individual-seed figures, in that order. It also writes
+the multiclass and SHAP CSV summaries and five manuscript LaTeX tables: three
+multiclass tables, the SHAP top-five comparison, and the SHAP ranking. This
+notebook does not download datasets or train models. It requires completed ablation, GNN,
+multiclass, and SHAP results, including files in the artifact cache; the committed
 PDFs and summary tables alone are not sufficient.
+
+### Recompute Only the SHAP Examples
+
+After completing Setup, this uses the project interpreter and kernel explicitly:
+
+```bash
+(
+  set -e
+  source "$HOME/.venvs/imv-ml/bin/activate"
+  export IMV_FORCE_RECOMPUTE=1
+  for notebook in src/empirical/shap_imv/shap_imv_*.ipynb \
+                  src/empirical/plotter/plotter.ipynb
+  do
+    python -m nbconvert --execute --to notebook --inplace \
+      --ExecutePreprocessor.kernel_name=imv-ml \
+      --ExecutePreprocessor.timeout=-1 "$notebook"
+  done
+)
+```
+
+This replaces the eight-feature SHAP results and then rebuilds the combined
+figures and tables, using existing results for the other experiments. It does
+not wipe `output/` or retrain the other experiment families. Use
+`IMV_FORCE_RECOMPUTE=0` to reuse valid checkpoints after an interruption.
 
 ### Run a Small Worked Example
 
@@ -194,15 +223,21 @@ Without a manuscript directory, it only exports the benchmark files locally.
 ## Key Outputs
 
 Figures are saved as **PDF only**, using Helvetica with font fallbacks and the
-`Spectral_r` colormap. Suggested ablation and GNN captions are included in the
+shared project colormap. Suggested ablation and GNN captions are included in the
 [combined plotter notebook](src/empirical/plotter/plotter.ipynb).
+Panels are labelled **a.**, **b.**, and so on, across rows and then down, with no
+descriptive titles or figure-wide titles. Dataset/model descriptions belong in
+the captions. Exporting a PDF removes older PNG/SVG copies of that same figure.
+All bars use black outlines and three-decimal value labels placed beyond their
+error caps. Shared helpers standardize error bars, annotation headroom and grids;
+wider heatmap colourbars stay aligned to their panels without changing row spacing.
 
 | Output | File or directory |
 | --- | --- |
-| Three-example ablation overview | [ablation_imv__mnist_har_magic_gamma__overview.pdf](output/figures/ablation_imv__mnist_har_magic_gamma__overview.pdf) |
-| Six-dataset GNN means and seed ranges | [gnn_training__six_datasets__learning_curves.pdf](output/figures/gnn_training__six_datasets__learning_curves.pdf) |
+| Three-example ablation overview | [Figure 4: MNIST, UCI HAR and MAGIC Gamma](output/figures/figure_4.pdf) |
+| Six-dataset GNN means and seed ranges | [Figure 5: GNN training](output/figures/figure_5.pdf) |
 | Individual GNN seed trajectories | [gnn_training__six_datasets__individual_seed_imv.pdf](output/figures/gnn_training__six_datasets__individual_seed_imv.pdf) |
-| Multiclass overview figures | [Car Evaluation](output/figures/multi_imv_results__car_evaluation.pdf), [Dry Bean](output/figures/multi_imv_results__dry_bean.pdf), [Nursery](output/figures/multi_imv_results__nursery.pdf) |
+| Multiclass overview figures | [Figure 3: Dry Bean](output/figures/figure_3.pdf), [Figure A4: Car Evaluation and Nursery](output/figures/figure_A4.pdf) |
 | Standalone ablation, multiclass, and SHAP-IMV figures | [output/figures/](output/figures/) |
 | Multiclass metrics and top-five feature tables | [output/examples/](output/examples/) |
 | Complexity table and timing audit files | [output/tables/](output/tables/) |
@@ -210,11 +245,13 @@ Figures are saved as **PDF only**, using Helvetica with font fallbacks and the
 ## Recovery Workflows
 
 - **Interrupted run:** restart with `bash run_all.sh --resume`. Completed work is reused where supported; GNN jobs restart from their latest valid checkpoint.
-- **Missing plotter inputs:** run the producer named in the error, with `jupyter nbconvert --execute --to notebook --inplace --ExecutePreprocessor.timeout=-1 PATH_TO_NOTEBOOK`, then rerun the combined plotter. Point `IMV_ARTIFACT_CACHE` at the original results if they are stored elsewhere.
+- **Missing plotter inputs:** run the producer named in the error, with `python -m nbconvert --execute --to notebook --inplace --ExecutePreprocessor.timeout=-1 --ExecutePreprocessor.kernel_name=imv-ml PATH_TO_NOTEBOOK`, then rerun the combined plotter. Point `IMV_ARTIFACT_CACHE` at the original results if they are stored elsewhere.
 - **Another invocation is active:** the runner uses a process lock to prevent overlapping full runs. Wait for that invocation or interrupt its original terminal with `Ctrl+C`; the runner cleans up its active notebook process group.
-- **Import errors in notebooks:** reactivate the environment, reinstall `requirements.txt` if necessary, and register its `python3` kernel using the setup command above.
+- **Import errors in notebooks:** reactivate the environment, reinstall `requirements.txt` if necessary, and register its `imv-ml` kernel using the setup command above. `numpy.core.multiarray failed to import` with NumPy 2 indicates an incompatible compiled dependency; this project requires `numpy>=1.26,<2`. Do not repair Anaconda base or upgrade NumPy alone. Restart any interactive kernel after installing dependencies.
 
-The runner reports each notebook's completion and stops on the first failure;
+The runner checks imports and kernel availability before clearing outputs or
+starting experiments. `IMV_KERNEL_NAME` overrides its default `imv-ml` kernel.
+It reports each notebook's completion and stops on the first failure;
 a quick resumed run can indicate restored checkpoints rather than new training.
 
 ## Validation Checks

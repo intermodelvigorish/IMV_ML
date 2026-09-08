@@ -34,6 +34,7 @@ class SourceLayoutTests(unittest.TestCase):
                          if path.is_file() and ".ipynb_checkpoints" not in path.parts
                          and "__pycache__" not in path.parts]
             self.assertFalse(old_files, old_files)
+        self.assertFalse((SOURCE / "plotter").exists())
         self.assertFalse((SOURCE / "simulated").exists())
         for filename in ("ablate_imv.ipynb", "multi_imv.ipynb", "shap_imv.ipynb",
                          "complexity.ipynb", "vanilla_imv.py"):
@@ -42,10 +43,11 @@ class SourceLayoutTests(unittest.TestCase):
             self.assertIn(notebook.relative_to(SOURCE).parts[0],
                           ("empirical", "simulations"))
         self.assertEqual({path.name for path in PLOTTER.glob("*.ipynb")},
-                         {"plotter.ipynb", "multi_imv_results.ipynb", "shap_imv_results.ipynb"})
-        for helper in ("figure_utils.py", "shared_style.py"):
-            self.assertTrue((PLOTTER / helper).is_file())
-            self.assertFalse((SOURCE / helper).exists())
+                         {"plotter.ipynb"})
+        self.assertTrue((PLOTTER / "figure_utils.py").is_file())
+        self.assertFalse((PLOTTER / "shared_style.py").exists())
+        self.assertFalse((SOURCE / "figure_utils.py").exists())
+        self.assertFalse((SOURCE / "shared_style.py").exists())
 
     def test_root_finder_works_from_all_nested_notebooks(self):
         for notebook in notebooks():
@@ -96,6 +98,11 @@ class SourceLayoutTests(unittest.TestCase):
                 self.assertIsNone(legacy_path.search(source))
                 self.assertIsNone(legacy_import.search(source))
                 self.assertIsNone(legacy_plot_import.search(source))
+                self.assertNotIn("shared_style", source)
+                self.assertNotIn(".set_title(", source)
+                self.assertNotIn(".suptitle(", source)
+                self.assertNotIn(".bar(", source)
+                self.assertNotIn(".bar_label(", source)
                 for reference in re.findall(r"src/[A-Za-z0-9_./-]+\.ipynb", source):
                     self.assertTrue((ROOT / reference).is_file(), reference)
 
@@ -160,7 +167,7 @@ class SourceLayoutTests(unittest.TestCase):
         self.assertNotIn("from imvpy.utils import save_figure", source)
 
     def test_shap_setup_resolves_root_before_optional_dependency_install(self):
-        notebook = PLOTTER / "shap_imv_results.ipynb"
+        notebook = PLOTTER / "plotter.ipynb"
         data = json.loads(notebook.read_text())
         source = next("".join(cell["source"]) for cell in data["cells"]
                       if cell["cell_type"] == "code")

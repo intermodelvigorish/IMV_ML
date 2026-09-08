@@ -62,6 +62,9 @@ class GNNResultTests(unittest.TestCase):
             self.assertEqual(ax.get_title(loc="center"), "")
             self.assertEqual(ax.get_title(loc="right"), "")
             self.assertFalse(ax.texts)
+            for line in ax.get_xgridlines() + ax.get_ygridlines():
+                if line.get_visible():
+                    self.assertEqual(line.get_linestyle(), "--")
         self.assertEqual(len(fig.legends), 1)
         self.assertTrue(fig.legends[0].get_frame_on())
         np.testing.assert_array_equal(fig.legends[0].get_frame().get_edgecolor(), [0, 0, 0, 1])

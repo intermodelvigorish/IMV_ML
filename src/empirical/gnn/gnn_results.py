@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from ..plotter.figure_utils import PAPER_STYLE, COLORMAP, artifact_directory
+from ..plotter.figure_utils import PAPER_STYLE, COLORMAP, artifact_directory, label_panels
 
 
 DATASET_ORDER = ("PROTEINS", "NCI1", "NCI109", "Mutagenicity", "AIDS", "DD")
@@ -122,22 +122,21 @@ def plot_gnn_learning_curves(results, *, figsize=(15.5, 8.5)):
                                 alpha=0.18 if metric == "imv" else 0.09, linewidth=0)
                 ax.plot(x, curve["mean"].to_numpy(), color=color, linestyle=linestyle,
                         linewidth=width, label=label, zorder=4 if metric == "imv" else 3)
-            ax.set_title(f"{chr(97 + index)}.", loc="left", pad=8)
             ax.set_xlim(0, 200)
             ax.set_ylim(low, high)
             ax.set_xticks([0, 50, 100, 150, 200])
             ax.axhline(0, color="0.65", linewidth=0.6)
-            ax.grid(True, linestyle=":", linewidth=0.6, color="0.8")
+            ax.grid(True, linewidth=0.6, color="0.8")
             ax.spines[["top", "right"]].set_visible(False)
             if index % 3 == 0:
                 ax.set_ylabel("Held-out test metric")
             if index >= 3:
                 ax.set_xlabel("Epoch")
+        label_panels(axes)
         handles, labels = axes[0, 0].get_legend_handles_labels()
         fig.legend(handles, labels, loc="lower center", bbox_to_anchor=(0.5, 0.015), ncol=4,
                    frameon=True, edgecolor="k", facecolor="white", framealpha=1,
                    fancybox=False, handlelength=3)
-        fig.subplots_adjust(left=0.07, right=0.985, top=0.96, bottom=0.14, wspace=0.12, hspace=0.28)
     return fig, axes
 
 
@@ -159,18 +158,17 @@ def plot_gnn_seed_curves(results, *, metric="imv", figsize=(15.5, 8.5)):
                 trajectory = raw[(raw.dataset == name) & (raw.seed == seed)].sort_values("epoch")
                 ax.plot(trajectory.epoch, trajectory[metric], color=palette(position),
                         linewidth=0.7, alpha=0.85, label=f"Seed {seed}")
-            ax.set_title(f"{chr(97 + index)}.", loc="left", pad=8)
             ax.set_xlim(0, 200)
             ax.set_xticks([0, 50, 100, 150, 200])
             ax.set_ylabel(ylabel)
             ax.ticklabel_format(axis="y", style="plain", useOffset=False)
-            ax.grid(True, linestyle=":", linewidth=0.6, color="0.8")
+            ax.grid(True, linewidth=0.6, color="0.8")
             ax.spines[["top", "right"]].set_visible(False)
             if index >= 3:
                 ax.set_xlabel("Epoch")
+        label_panels(axes)
         handles, labels = axes[0, 0].get_legend_handles_labels()
         fig.legend(handles, labels, loc="lower center", bbox_to_anchor=(0.5, 0.015),
                    ncol=5, frameon=True, edgecolor="k", facecolor="white", framealpha=1,
                    fancybox=False, handlelength=3)
-        fig.subplots_adjust(left=0.07, right=0.985, top=0.96, bottom=0.18, wspace=0.25, hspace=0.28)
     return fig, axes
