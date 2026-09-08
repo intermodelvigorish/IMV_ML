@@ -12,9 +12,6 @@ from matplotlib.ticker import MultipleLocator
 import numpy as np
 import pandas as pd
 
-from imvpy import AblationIMV, imv_from_likelihoods
-from imvpy.utils import plot_ablation_matrix as _imvpy_ablation_matrix
-
 
 @dataclass(frozen=True)
 class AblationExample:
@@ -135,6 +132,8 @@ def configure_plotting():
 def plot_ablation_matrix(matrix, *, figsize=(6, 6), title="Ablation IMV matrix",
                          cmap=COLORMAP):
     """Style imvpy's heatmap without changing its values or normalization."""
+    from imvpy.utils import plot_ablation_matrix as _imvpy_ablation_matrix
+
     # The pinned imvpy plot helper hardcodes its palette and has no cmap argument.
     with mpl.rc_context(PAPER_STYLE):
         fig, ax = _imvpy_ablation_matrix(matrix, figsize=figsize, title=title)
@@ -207,6 +206,8 @@ def load_ablation_results(example, artifact_root=None, *, seeds=ABLATION_SEEDS):
     so imvpy can calculate this score without loading or refitting a model.
     Transform each seed before averaging: IMV is nonlinear in likelihood.
     """
+    from imvpy import AblationIMV, imv_from_likelihoods
+
     seeds = tuple(seeds)
     if len(seeds) < 2 or len(set(seeds)) != len(seeds):
         raise ValueError("At least two distinct seeds are required for sample SD")

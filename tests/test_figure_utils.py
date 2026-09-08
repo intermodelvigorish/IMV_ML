@@ -3,6 +3,7 @@
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -21,6 +22,29 @@ from src.empirical.plotter.figure_utils import (
 
 
 class AblationPlotTests(unittest.TestCase):
+    def test_plotting_helpers_import_without_imvpy(self):
+        script = """
+import builtins
+import sys
+
+original_import = builtins.__import__
+def without_imvpy(name, *args, **kwargs):
+    if name == 'imvpy' or name.startswith('imvpy.'):
+        raise ImportError('imvpy is deliberately unavailable for this test')
+    return original_import(name, *args, **kwargs)
+
+builtins.__import__ = without_imvpy
+from src.empirical.plotter.figure_utils import COLORMAP, configure_plotting
+from src.empirical.plotter import shared_style
+configure_plotting()
+assert 'imvpy' not in sys.modules
+assert shared_style.PALETTE == COLORMAP
+"""
+        result = subprocess.run([sys.executable, "-c", script],
+                                cwd=Path(__file__).resolve().parents[1],
+                                capture_output=True, text=True, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
@@ -98,7 +122,7 @@ class AblationPlotTests(unittest.TestCase):
         for column in range(3):
             heatmap = axes[0, column]
             mesh = heatmap.collections[0]
-            self.assertEqual(mesh.cmap.name, "Spectral_r")
+            self.assertEqual(mesh.cmap.name, COLORMAP)
             self.assertEqual(heatmap.title.get_fontfamily()[0], "Helvetica")
             self.assertIs(axes[0, 0].collections[0].norm, mesh.norm)
             np.testing.assert_allclose(
@@ -142,7 +166,7 @@ class AblationPlotTests(unittest.TestCase):
         fig, ax = plot_ablation_matrix(matrix)
         self.addCleanup(plt.close, fig)
         mesh = ax.collections[0]
-        self.assertEqual(mesh.cmap.name, "Spectral_r")
+        self.assertEqual(mesh.cmap.name, COLORMAP)
         self.assertEqual(ax.title.get_fontfamily()[0], "Helvetica")
         np.testing.assert_allclose(mesh.get_array().reshape(matrix.shape), matrix)
         self.assertFalse(mesh.colorbar.solids.get_rasterized())

@@ -29,7 +29,11 @@ class SourceLayoutTests(unittest.TestCase):
     def test_examples_live_in_one_of_the_two_groups(self):
         for group in ("ablation_imv", "gnn", "multi_imv", "shap_imv", "plotter"):
             self.assertTrue((SOURCE / "empirical" / group).is_dir())
-            self.assertFalse((SOURCE / group).exists())
+            # A relocated notebook can leave ignored Jupyter checkpoints behind.
+            old_files = [path for path in (SOURCE / group).rglob("*")
+                         if path.is_file() and ".ipynb_checkpoints" not in path.parts
+                         and "__pycache__" not in path.parts]
+            self.assertFalse(old_files, old_files)
         self.assertFalse((SOURCE / "simulated").exists())
         for filename in ("ablate_imv.ipynb", "multi_imv.ipynb", "shap_imv.ipynb",
                          "complexity.ipynb", "vanilla_imv.py"):
@@ -37,7 +41,8 @@ class SourceLayoutTests(unittest.TestCase):
         for notebook in notebooks():
             self.assertIn(notebook.relative_to(SOURCE).parts[0],
                           ("empirical", "simulations"))
-        self.assertEqual(list(PLOTTER.glob("*.ipynb")), [PLOTTER / "plotter.ipynb"])
+        self.assertEqual({path.name for path in PLOTTER.glob("*.ipynb")},
+                         {"plotter.ipynb", "multi_imv_results.ipynb", "shap_imv_results.ipynb"})
         for helper in ("figure_utils.py", "shared_style.py"):
             self.assertTrue((PLOTTER / helper).is_file())
             self.assertFalse((SOURCE / helper).exists())
@@ -153,6 +158,37 @@ class SourceLayoutTests(unittest.TestCase):
         self.assertIn("save_publication_figure", source)
         self.assertIn("FIGURES = figure_directory(PROJECT_ROOT)", source)
         self.assertNotIn("from imvpy.utils import save_figure", source)
+
+    def test_shap_setup_resolves_root_before_optional_dependency_install(self):
+        notebook = PLOTTER / "shap_imv_results.ipynb"
+        data = json.loads(notebook.read_text())
+        source = next("".join(cell["source"]) for cell in data["cells"]
+                      if cell["cell_type"] == "code")
+        tree = ast.parse(TransformerManager().transform_cell(source))
+        installation = next(node for node in tree.body if isinstance(node, ast.If)
+                            and isinstance(node.test, ast.Name)
+                            and node.test.id == "INSTALL_REQUIREMENTS")
+        prefix = tree.body[:tree.body.index(installation) + 1]
+        calls = []
+
+        class Kernel:
+            def run_line_magic(kernel, magic, argument):
+                self.assertEqual(namespace["PROJECT_ROOT"], ROOT)
+                calls.append((magic, argument))
+
+        namespace = {"get_ipython": Kernel}
+        with patch("os.getcwd", return_value=str(notebook.parent)):
+            exec(compile(ast.Module(body=prefix, type_ignores=[]), str(notebook), "exec"),
+                 namespace)
+        self.assertEqual(namespace["PROJECT_ROOT"], ROOT)
+        self.assertFalse(namespace["INSTALL_REQUIREMENTS"])
+        self.assertEqual(calls, [])
+        namespace["INSTALL_REQUIREMENTS"] = True
+        exec(compile(ast.Module(body=[installation], type_ignores=[]), str(notebook), "exec"),
+             namespace)
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(calls[0][0], "pip")
+        self.assertIn("requirements.txt", calls[0][1])
 
 
 if __name__ == "__main__":
