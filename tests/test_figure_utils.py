@@ -14,7 +14,7 @@ import pandas as pd
 from PIL import Image
 from imvpy import imv_from_likelihoods
 
-from src.figure_utils import (
+from src.empirical.plotter.figure_utils import (
     COLORMAP, AblationExample, configure_plotting, load_ablation_results,
     plot_ablation_matrix, plot_ablation_overview, save_publication_figure, spectral_colors,
 )

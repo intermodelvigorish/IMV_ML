@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from figure_utils import PAPER_STYLE, COLORMAP, artifact_directory
+from ..plotter.figure_utils import PAPER_STYLE, COLORMAP, artifact_directory
 
 
 DATASET_ORDER = ("PROTEINS", "NCI1", "NCI109", "Mutagenicity", "AIDS", "DD")
