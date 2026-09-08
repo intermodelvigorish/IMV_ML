@@ -1,0 +1,223 @@
+example,dataset,model,class_i,class_j,class_i_name,class_j_name,pairwise_imv
+multi_imv_car_evaluation,Car Evaluation,logistic_regression,0,0,unacc,unacc,0.0
+multi_imv_car_evaluation,Car Evaluation,logistic_regression,0,1,unacc,acc,0.0782278648853846
+multi_imv_car_evaluation,Car Evaluation,logistic_regression,0,2,unacc,good,0.0063550764192996
+multi_imv_car_evaluation,Car Evaluation,logistic_regression,0,3,unacc,vgood,0.0362407073110504
+multi_imv_car_evaluation,Car Evaluation,logistic_regression,1,0,acc,unacc,0.0782278648853846
+multi_imv_car_evaluation,Car Evaluation,logistic_regression,1,1,acc,acc,0.0
+multi_imv_car_evaluation,Car Evaluation,logistic_regression,1,2,acc,good,-0.0049681301764046
+multi_imv_car_evaluation,Car Evaluation,logistic_regression,1,3,acc,vgood,0.0660066286513085
+multi_imv_car_evaluation,Car Evaluation,logistic_regression,2,0,good,unacc,0.0063550764192996
+multi_imv_car_evaluation,Car Evaluation,logistic_regression,2,1,good,acc,-0.0049681301764046
+multi_imv_car_evaluation,Car Evaluation,logistic_regression,2,2,good,good,0.0
+multi_imv_car_evaluation,Car Evaluation,logistic_regression,2,3,good,vgood,0.7987152138048457
+multi_imv_car_evaluation,Car Evaluation,logistic_regression,3,0,vgood,unacc,0.0362407073110504
+multi_imv_car_evaluation,Car Evaluation,logistic_regression,3,1,vgood,acc,0.0660066286513085
+multi_imv_car_evaluation,Car Evaluation,logistic_regression,3,2,vgood,good,0.7987152138048466
+multi_imv_car_evaluation,Car Evaluation,logistic_regression,3,3,vgood,vgood,0.0
+multi_imv_car_evaluation,Car Evaluation,xgboost,0,0,unacc,unacc,0.0
+multi_imv_car_evaluation,Car Evaluation,xgboost,0,1,unacc,acc,0.2944822462943656
+multi_imv_car_evaluation,Car Evaluation,xgboost,0,2,unacc,good,0.0551050306433683
+multi_imv_car_evaluation,Car Evaluation,xgboost,0,3,unacc,vgood,0.0534501810605817
+multi_imv_car_evaluation,Car Evaluation,xgboost,1,0,acc,unacc,0.2944822457870319
+multi_imv_car_evaluation,Car Evaluation,xgboost,1,1,acc,acc,0.0
+multi_imv_car_evaluation,Car Evaluation,xgboost,1,2,acc,good,0.1469505787472974
+multi_imv_car_evaluation,Car Evaluation,xgboost,1,3,acc,vgood,0.1556988204569062
+multi_imv_car_evaluation,Car Evaluation,xgboost,2,0,good,unacc,0.0551050307943516
+multi_imv_car_evaluation,Car Evaluation,xgboost,2,1,good,acc,0.1469505777111579
+multi_imv_car_evaluation,Car Evaluation,xgboost,2,2,good,good,0.0
+multi_imv_car_evaluation,Car Evaluation,xgboost,2,3,good,vgood,0.9020211381620796
+multi_imv_car_evaluation,Car Evaluation,xgboost,3,0,vgood,unacc,0.0534501809716837
+multi_imv_car_evaluation,Car Evaluation,xgboost,3,1,vgood,acc,0.1556988205047363
+multi_imv_car_evaluation,Car Evaluation,xgboost,3,2,vgood,good,0.9020211322068036
+multi_imv_car_evaluation,Car Evaluation,xgboost,3,3,vgood,vgood,0.0
+multi_imv_car_evaluation,Car Evaluation,lightgbm,0,0,unacc,unacc,0.0
+multi_imv_car_evaluation,Car Evaluation,lightgbm,0,1,unacc,acc,0.3052575057622484
+multi_imv_car_evaluation,Car Evaluation,lightgbm,0,2,unacc,good,0.0560660763313862
+multi_imv_car_evaluation,Car Evaluation,lightgbm,0,3,unacc,vgood,0.0536674438045822
+multi_imv_car_evaluation,Car Evaluation,lightgbm,1,0,acc,unacc,0.3052575057622484
+multi_imv_car_evaluation,Car Evaluation,lightgbm,1,1,acc,acc,0.0
+multi_imv_car_evaluation,Car Evaluation,lightgbm,1,2,acc,good,0.1613814310160189
+multi_imv_car_evaluation,Car Evaluation,lightgbm,1,3,acc,vgood,0.1636362684609486
+multi_imv_car_evaluation,Car Evaluation,lightgbm,2,0,good,unacc,0.0560660763313862
+multi_imv_car_evaluation,Car Evaluation,lightgbm,2,1,good,acc,0.1613814310160189
+multi_imv_car_evaluation,Car Evaluation,lightgbm,2,2,good,good,0.0
+multi_imv_car_evaluation,Car Evaluation,lightgbm,2,3,good,vgood,0.922421274756395
+multi_imv_car_evaluation,Car Evaluation,lightgbm,3,0,vgood,unacc,0.0536674438045822
+multi_imv_car_evaluation,Car Evaluation,lightgbm,3,1,vgood,acc,0.1636362684609486
+multi_imv_car_evaluation,Car Evaluation,lightgbm,3,2,vgood,good,0.9224212747563943
+multi_imv_car_evaluation,Car Evaluation,lightgbm,3,3,vgood,vgood,0.0
+multi_imv_dry_bean,Dry Bean,logistic_regression,0,0,BARBUNYA,BARBUNYA,0.0
+multi_imv_dry_bean,Dry Bean,logistic_regression,0,1,BARBUNYA,BOMBAY,0.3946614893844313
+multi_imv_dry_bean,Dry Bean,logistic_regression,0,2,BARBUNYA,CALI,0.766453511389973
+multi_imv_dry_bean,Dry Bean,logistic_regression,0,3,BARBUNYA,DERMASON,0.3718206606208085
+multi_imv_dry_bean,Dry Bean,logistic_regression,0,4,BARBUNYA,HOROZ,0.6791104384600549
+multi_imv_dry_bean,Dry Bean,logistic_regression,0,5,BARBUNYA,SEKER,0.6398514195151932
+multi_imv_dry_bean,Dry Bean,logistic_regression,0,6,BARBUNYA,SIRA,0.4919275544115206
+multi_imv_dry_bean,Dry Bean,logistic_regression,1,0,BOMBAY,BARBUNYA,0.3946614893844313
+multi_imv_dry_bean,Dry Bean,logistic_regression,1,1,BOMBAY,BOMBAY,0.0
+multi_imv_dry_bean,Dry Bean,logistic_regression,1,2,BOMBAY,CALI,0.3199230261230208
+multi_imv_dry_bean,Dry Bean,logistic_regression,1,3,BOMBAY,DERMASON,0.1472090940131877
+multi_imv_dry_bean,Dry Bean,logistic_regression,1,4,BOMBAY,HOROZ,0.2706548682965244
+multi_imv_dry_bean,Dry Bean,logistic_regression,1,5,BOMBAY,SEKER,0.2558038535785625
+multi_imv_dry_bean,Dry Bean,logistic_regression,1,6,BOMBAY,SIRA,0.1980283844641124
+multi_imv_dry_bean,Dry Bean,logistic_regression,2,0,CALI,BARBUNYA,0.7664535113899746
+multi_imv_dry_bean,Dry Bean,logistic_regression,2,1,CALI,BOMBAY,0.3199230261230207
+multi_imv_dry_bean,Dry Bean,logistic_regression,2,2,CALI,CALI,0.0
+multi_imv_dry_bean,Dry Bean,logistic_regression,2,3,CALI,DERMASON,0.4593415610691302
+multi_imv_dry_bean,Dry Bean,logistic_regression,2,4,CALI,HOROZ,0.8257107064390128
+multi_imv_dry_bean,Dry Bean,logistic_regression,2,5,CALI,SEKER,0.796985129123102
+multi_imv_dry_bean,Dry Bean,logistic_regression,2,6,CALI,SIRA,0.6099265297211593
+multi_imv_dry_bean,Dry Bean,logistic_regression,3,0,DERMASON,BARBUNYA,0.3718206606208086
+multi_imv_dry_bean,Dry Bean,logistic_regression,3,1,DERMASON,BOMBAY,0.1472090940131877
+multi_imv_dry_bean,Dry Bean,logistic_regression,3,2,DERMASON,CALI,0.4593415610691304
+multi_imv_dry_bean,Dry Bean,logistic_regression,3,3,DERMASON,DERMASON,0.0
+multi_imv_dry_bean,Dry Bean,logistic_regression,3,4,DERMASON,HOROZ,0.5372375622705965
+multi_imv_dry_bean,Dry Bean,logistic_regression,3,5,DERMASON,SEKER,0.5551462857875631
+multi_imv_dry_bean,Dry Bean,logistic_regression,3,6,DERMASON,SIRA,0.66539196761766
+multi_imv_dry_bean,Dry Bean,logistic_regression,4,0,HOROZ,BARBUNYA,0.6791104384600549
+multi_imv_dry_bean,Dry Bean,logistic_regression,4,1,HOROZ,BOMBAY,0.2706548682965244
+multi_imv_dry_bean,Dry Bean,logistic_regression,4,2,HOROZ,CALI,0.8257107064390128
+multi_imv_dry_bean,Dry Bean,logistic_regression,4,3,HOROZ,DERMASON,0.5372375622705966
+multi_imv_dry_bean,Dry Bean,logistic_regression,4,4,HOROZ,HOROZ,0.0
+multi_imv_dry_bean,Dry Bean,logistic_regression,4,5,HOROZ,SEKER,0.9476658277430609
+multi_imv_dry_bean,Dry Bean,logistic_regression,4,6,HOROZ,SIRA,0.7079990716835606
+multi_imv_dry_bean,Dry Bean,logistic_regression,5,0,SEKER,BARBUNYA,0.6398514195184839
+multi_imv_dry_bean,Dry Bean,logistic_regression,5,1,SEKER,BOMBAY,0.2558038535813652
+multi_imv_dry_bean,Dry Bean,logistic_regression,5,2,SEKER,CALI,0.7969851291259789
+multi_imv_dry_bean,Dry Bean,logistic_regression,5,3,SEKER,DERMASON,0.5551462857894277
+multi_imv_dry_bean,Dry Bean,logistic_regression,5,4,SEKER,HOROZ,0.94766582774572
+multi_imv_dry_bean,Dry Bean,logistic_regression,5,5,SEKER,SEKER,0.0
+multi_imv_dry_bean,Dry Bean,logistic_regression,5,6,SEKER,SIRA,0.7414718782642616
+multi_imv_dry_bean,Dry Bean,logistic_regression,6,0,SIRA,BARBUNYA,0.4919275544115206
+multi_imv_dry_bean,Dry Bean,logistic_regression,6,1,SIRA,BOMBAY,0.1980283844641124
+multi_imv_dry_bean,Dry Bean,logistic_regression,6,2,SIRA,CALI,0.6099265297211593
+multi_imv_dry_bean,Dry Bean,logistic_regression,6,3,SIRA,DERMASON,0.66539196761766
+multi_imv_dry_bean,Dry Bean,logistic_regression,6,4,SIRA,HOROZ,0.7079990716835611
+multi_imv_dry_bean,Dry Bean,logistic_regression,6,5,SIRA,SEKER,0.7414718782615013
+multi_imv_dry_bean,Dry Bean,logistic_regression,6,6,SIRA,SIRA,0.0
+multi_imv_dry_bean,Dry Bean,xgboost,0,0,BARBUNYA,BARBUNYA,0.0
+multi_imv_dry_bean,Dry Bean,xgboost,0,1,BARBUNYA,BOMBAY,0.3946613260919595
+multi_imv_dry_bean,Dry Bean,xgboost,0,2,BARBUNYA,CALI,0.7720904851990811
+multi_imv_dry_bean,Dry Bean,xgboost,0,3,BARBUNYA,DERMASON,0.3723132564663914
+multi_imv_dry_bean,Dry Bean,xgboost,0,4,BARBUNYA,HOROZ,0.6792646816815264
+multi_imv_dry_bean,Dry Bean,xgboost,0,5,BARBUNYA,SEKER,0.6446864857946736
+multi_imv_dry_bean,Dry Bean,xgboost,0,6,BARBUNYA,SIRA,0.4926501593229536
+multi_imv_dry_bean,Dry Bean,xgboost,1,0,BOMBAY,BARBUNYA,0.3946613258157918
+multi_imv_dry_bean,Dry Bean,xgboost,1,1,BOMBAY,BOMBAY,0.0
+multi_imv_dry_bean,Dry Bean,xgboost,1,2,BOMBAY,CALI,0.3195894915947701
+multi_imv_dry_bean,Dry Bean,xgboost,1,3,BOMBAY,DERMASON,0.1472000599633333
+multi_imv_dry_bean,Dry Bean,xgboost,1,4,BOMBAY,HOROZ,0.270713365186193
+multi_imv_dry_bean,Dry Bean,xgboost,1,5,BOMBAY,SEKER,0.2574917932552142
+multi_imv_dry_bean,Dry Bean,xgboost,1,6,BOMBAY,SIRA,0.1980040998195065
+multi_imv_dry_bean,Dry Bean,xgboost,2,0,CALI,BARBUNYA,0.7720904852625879
+multi_imv_dry_bean,Dry Bean,xgboost,2,1,CALI,BOMBAY,0.3195894916445961
+multi_imv_dry_bean,Dry Bean,xgboost,2,2,CALI,CALI,0.0
+multi_imv_dry_bean,Dry Bean,xgboost,2,3,CALI,DERMASON,0.4595339161310425
+multi_imv_dry_bean,Dry Bean,xgboost,2,4,CALI,HOROZ,0.8276744032918358
+multi_imv_dry_bean,Dry Bean,xgboost,2,5,CALI,SEKER,0.8010283546275133
+multi_imv_dry_bean,Dry Bean,xgboost,2,6,CALI,SIRA,0.6122358752385731
+multi_imv_dry_bean,Dry Bean,xgboost,3,0,DERMASON,BARBUNYA,0.372313256125226
+multi_imv_dry_bean,Dry Bean,xgboost,3,1,DERMASON,BOMBAY,0.1472000602563078
+multi_imv_dry_bean,Dry Bean,xgboost,3,2,DERMASON,CALI,0.4595339161403237
+multi_imv_dry_bean,Dry Bean,xgboost,3,3,DERMASON,DERMASON,0.0
+multi_imv_dry_bean,Dry Bean,xgboost,3,4,DERMASON,HOROZ,0.539173575726955
+multi_imv_dry_bean,Dry Bean,xgboost,3,5,DERMASON,SEKER,0.5575808350520542
+multi_imv_dry_bean,Dry Bean,xgboost,3,6,DERMASON,SIRA,0.6745461583446855
+multi_imv_dry_bean,Dry Bean,xgboost,4,0,HOROZ,BARBUNYA,0.6792646811717906
+multi_imv_dry_bean,Dry Bean,xgboost,4,1,HOROZ,BOMBAY,0.2707133654990735
+multi_imv_dry_bean,Dry Bean,xgboost,4,2,HOROZ,CALI,0.8276744032444331
+multi_imv_dry_bean,Dry Bean,xgboost,4,3,HOROZ,DERMASON,0.5391735765949891
+multi_imv_dry_bean,Dry Bean,xgboost,4,4,HOROZ,HOROZ,0.0
+multi_imv_dry_bean,Dry Bean,xgboost,4,5,HOROZ,SEKER,0.9493694683362164
+multi_imv_dry_bean,Dry Bean,xgboost,4,6,HOROZ,SIRA,0.7093615349432545
+multi_imv_dry_bean,Dry Bean,xgboost,5,0,SEKER,BARBUNYA,0.6446864861420264
+multi_imv_dry_bean,Dry Bean,xgboost,5,1,SEKER,BOMBAY,0.2574917933222892
+multi_imv_dry_bean,Dry Bean,xgboost,5,2,SEKER,CALI,0.8010283518473678
+multi_imv_dry_bean,Dry Bean,xgboost,5,3,SEKER,DERMASON,0.5575808354841587
+multi_imv_dry_bean,Dry Bean,xgboost,5,4,SEKER,HOROZ,0.9493694649466218
+multi_imv_dry_bean,Dry Bean,xgboost,5,5,SEKER,SEKER,0.0
+multi_imv_dry_bean,Dry Bean,xgboost,5,6,SEKER,SIRA,0.7473345751805265
+multi_imv_dry_bean,Dry Bean,xgboost,6,0,SIRA,BARBUNYA,0.4926501570432654
+multi_imv_dry_bean,Dry Bean,xgboost,6,1,SIRA,BOMBAY,0.1980040996500759
+multi_imv_dry_bean,Dry Bean,xgboost,6,2,SIRA,CALI,0.6122358753646739
+multi_imv_dry_bean,Dry Bean,xgboost,6,3,SIRA,DERMASON,0.6745461582104921
+multi_imv_dry_bean,Dry Bean,xgboost,6,4,SIRA,HOROZ,0.709361536959255
+multi_imv_dry_bean,Dry Bean,xgboost,6,5,SIRA,SEKER,0.7473345749161868
+multi_imv_dry_bean,Dry Bean,xgboost,6,6,SIRA,SIRA,0.0
+multi_imv_dry_bean,Dry Bean,lightgbm,0,0,BARBUNYA,BARBUNYA,0.0
+multi_imv_dry_bean,Dry Bean,lightgbm,0,1,BARBUNYA,BOMBAY,0.3933902654599271
+multi_imv_dry_bean,Dry Bean,lightgbm,0,2,BARBUNYA,CALI,0.7723491238828871
+multi_imv_dry_bean,Dry Bean,lightgbm,0,3,BARBUNYA,DERMASON,0.3723179131029156
+multi_imv_dry_bean,Dry Bean,lightgbm,0,4,BARBUNYA,HOROZ,0.6791369128448491
+multi_imv_dry_bean,Dry Bean,lightgbm,0,5,BARBUNYA,SEKER,0.6443516644038187
+multi_imv_dry_bean,Dry Bean,lightgbm,0,6,BARBUNYA,SIRA,0.4927638415493569
+multi_imv_dry_bean,Dry Bean,lightgbm,1,0,BOMBAY,BARBUNYA,0.3933902654599268
+multi_imv_dry_bean,Dry Bean,lightgbm,1,1,BOMBAY,BOMBAY,0.0
+multi_imv_dry_bean,Dry Bean,lightgbm,1,2,BOMBAY,CALI,0.3191932069346673
+multi_imv_dry_bean,Dry Bean,lightgbm,1,3,BOMBAY,DERMASON,0.1471448998386878
+multi_imv_dry_bean,Dry Bean,lightgbm,1,4,BOMBAY,HOROZ,0.270582978594516
+multi_imv_dry_bean,Dry Bean,lightgbm,1,5,BOMBAY,SEKER,0.2573017172152488
+multi_imv_dry_bean,Dry Bean,lightgbm,1,6,BOMBAY,SIRA,0.1978836389866955
+multi_imv_dry_bean,Dry Bean,lightgbm,2,0,CALI,BARBUNYA,0.7723491238828871
+multi_imv_dry_bean,Dry Bean,lightgbm,2,1,CALI,BOMBAY,0.319193206934667
+multi_imv_dry_bean,Dry Bean,lightgbm,2,2,CALI,CALI,0.0
+multi_imv_dry_bean,Dry Bean,lightgbm,2,3,CALI,DERMASON,0.4595513977164661
+multi_imv_dry_bean,Dry Bean,lightgbm,2,4,CALI,HOROZ,0.8274298845874106
+multi_imv_dry_bean,Dry Bean,lightgbm,2,5,CALI,SEKER,0.8007344715094635
+multi_imv_dry_bean,Dry Bean,lightgbm,2,6,CALI,SIRA,0.6117598664228545
+multi_imv_dry_bean,Dry Bean,lightgbm,3,0,DERMASON,BARBUNYA,0.3723179131029155
+multi_imv_dry_bean,Dry Bean,lightgbm,3,1,DERMASON,BOMBAY,0.1471448998386878
+multi_imv_dry_bean,Dry Bean,lightgbm,3,2,DERMASON,CALI,0.4595513977164661
+multi_imv_dry_bean,Dry Bean,lightgbm,3,3,DERMASON,DERMASON,0.0
+multi_imv_dry_bean,Dry Bean,lightgbm,3,4,DERMASON,HOROZ,0.5390071840707018
+multi_imv_dry_bean,Dry Bean,lightgbm,3,5,DERMASON,SEKER,0.5566688602880292
+multi_imv_dry_bean,Dry Bean,lightgbm,3,6,DERMASON,SIRA,0.6738007263690161
+multi_imv_dry_bean,Dry Bean,lightgbm,4,0,HOROZ,BARBUNYA,0.6791369128448497
+multi_imv_dry_bean,Dry Bean,lightgbm,4,1,HOROZ,BOMBAY,0.2705829785945159
+multi_imv_dry_bean,Dry Bean,lightgbm,4,2,HOROZ,CALI,0.8274298845874066
+multi_imv_dry_bean,Dry Bean,lightgbm,4,3,HOROZ,DERMASON,0.5390071840707027
+multi_imv_dry_bean,Dry Bean,lightgbm,4,4,HOROZ,HOROZ,0.0
+multi_imv_dry_bean,Dry Bean,lightgbm,4,5,HOROZ,SEKER,0.9495089146914324
+multi_imv_dry_bean,Dry Bean,lightgbm,4,6,HOROZ,SIRA,0.708387982845877
+multi_imv_dry_bean,Dry Bean,lightgbm,5,0,SEKER,BARBUNYA,0.6443516644038187
+multi_imv_dry_bean,Dry Bean,lightgbm,5,1,SEKER,BOMBAY,0.2573017172152488
+multi_imv_dry_bean,Dry Bean,lightgbm,5,2,SEKER,CALI,0.8007344715094622
+multi_imv_dry_bean,Dry Bean,lightgbm,5,3,SEKER,DERMASON,0.5566688602880292
+multi_imv_dry_bean,Dry Bean,lightgbm,5,4,SEKER,HOROZ,0.9495089146914296
+multi_imv_dry_bean,Dry Bean,lightgbm,5,5,SEKER,SEKER,0.0
+multi_imv_dry_bean,Dry Bean,lightgbm,5,6,SEKER,SIRA,0.7464235177343019
+multi_imv_dry_bean,Dry Bean,lightgbm,6,0,SIRA,BARBUNYA,0.4927638415493569
+multi_imv_dry_bean,Dry Bean,lightgbm,6,1,SIRA,BOMBAY,0.1978836389866954
+multi_imv_dry_bean,Dry Bean,lightgbm,6,2,SIRA,CALI,0.6117598664228545
+multi_imv_dry_bean,Dry Bean,lightgbm,6,3,SIRA,DERMASON,0.6738007263690161
+multi_imv_dry_bean,Dry Bean,lightgbm,6,4,SIRA,HOROZ,0.708387982845877
+multi_imv_dry_bean,Dry Bean,lightgbm,6,5,SIRA,SEKER,0.746423517734302
+multi_imv_dry_bean,Dry Bean,lightgbm,6,6,SIRA,SIRA,0.0
+multi_imv_nursery,Nursery,logistic_regression,0,0,not_recom,not_recom,0.0
+multi_imv_nursery,Nursery,logistic_regression,0,1,not_recom,priority,0.9872372897914864
+multi_imv_nursery,Nursery,logistic_regression,0,2,not_recom,spec_prior,0.935673172582327
+multi_imv_nursery,Nursery,logistic_regression,1,0,priority,not_recom,0.9872372897914856
+multi_imv_nursery,Nursery,logistic_regression,1,1,priority,priority,0.0
+multi_imv_nursery,Nursery,logistic_regression,1,2,priority,spec_prior,0.3993818213635596
+multi_imv_nursery,Nursery,logistic_regression,2,0,spec_prior,not_recom,0.935673172582326
+multi_imv_nursery,Nursery,logistic_regression,2,1,spec_prior,priority,0.3993818213635594
+multi_imv_nursery,Nursery,logistic_regression,2,2,spec_prior,spec_prior,0.0
+multi_imv_nursery,Nursery,xgboost,0,0,not_recom,not_recom,0.0
+multi_imv_nursery,Nursery,xgboost,0,1,not_recom,priority,0.9874460859744656
+multi_imv_nursery,Nursery,xgboost,0,2,not_recom,spec_prior,0.9360377415970568
+multi_imv_nursery,Nursery,xgboost,1,0,priority,not_recom,0.9874460881874408
+multi_imv_nursery,Nursery,xgboost,1,1,priority,priority,0.0
+multi_imv_nursery,Nursery,xgboost,1,2,priority,spec_prior,0.8968539701211249
+multi_imv_nursery,Nursery,xgboost,2,0,spec_prior,not_recom,0.9360377420756124
+multi_imv_nursery,Nursery,xgboost,2,1,spec_prior,priority,0.8968539701366162
+multi_imv_nursery,Nursery,xgboost,2,2,spec_prior,spec_prior,0.0
+multi_imv_nursery,Nursery,lightgbm,0,0,not_recom,not_recom,0.0
+multi_imv_nursery,Nursery,lightgbm,0,1,not_recom,priority,0.9875069993248548
+multi_imv_nursery,Nursery,lightgbm,0,2,not_recom,spec_prior,0.9361056118544318
+multi_imv_nursery,Nursery,lightgbm,1,0,priority,not_recom,0.9875069993248572
+multi_imv_nursery,Nursery,lightgbm,1,1,priority,priority,0.0
+multi_imv_nursery,Nursery,lightgbm,1,2,priority,spec_prior,0.9148542153173226
+multi_imv_nursery,Nursery,lightgbm,2,0,spec_prior,not_recom,0.9361056118544312
+multi_imv_nursery,Nursery,lightgbm,2,1,spec_prior,priority,0.9148542153173216
+multi_imv_nursery,Nursery,lightgbm,2,2,spec_prior,spec_prior,0.0

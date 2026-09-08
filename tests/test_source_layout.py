@@ -98,6 +98,53 @@ class SourceLayoutTests(unittest.TestCase):
         self.assertEqual(discovered, producers + plotters)
         self.assertEqual(len(discovered), len(set(discovered)))
 
+    def test_empirical_notebooks_include_metric_and_feature_comparisons(self):
+        expected = {
+            "multi_imv": ("car_evaluation", "dry_bean", "nursery"),
+            "shap_imv": ("adult_income", "breast_cancer", "titanic"),
+        }
+        transformer = TransformerManager()
+        for group, datasets in expected.items():
+            for dataset in datasets:
+                notebook = SOURCE / "empirical" / group / f"{group}_{dataset}.ipynb"
+                data = json.loads(notebook.read_text())
+                definitions = set()
+                for cell in data["cells"]:
+                    if cell["cell_type"] == "code":
+                        tree = ast.parse(transformer.transform_cell("".join(cell["source"])))
+                        definitions.update(node.name for node in tree.body
+                                           if isinstance(node, ast.FunctionDef))
+                with self.subTest(notebook=notebook.name):
+                    required = ({"classification_metrics", "format_cell"}
+                                if group == "multi_imv"
+                                else {"shap_importance", "lime_importance",
+                                      "anchor_importance", "evaluate"})
+                    self.assertTrue(required <= definitions, required - definitions)
+                    ids = [cell["id"] for cell in data["cells"]]
+                    self.assertEqual(len(ids), len(set(ids)))
+
+    def test_feature_helper_finds_project_when_invoked_outside_repository(self):
+        script = SOURCE / "empirical" / "shap_imv" / "top_k_features.py"
+        tree = ast.parse(script.read_text())
+        root_assignment = next(node for node in tree.body
+                               if isinstance(node, ast.Assign)
+                               and any(isinstance(target, ast.Name)
+                                       and target.id == "PROJECT_ROOT"
+                                       for target in node.targets))
+        code = compile(ast.Expression(root_assignment.value), str(script), "eval")
+        with tempfile.TemporaryDirectory() as cwd:
+            with patch("os.getcwd", return_value=cwd):
+                root = eval(code, {"Path": Path, "__file__": str(script)})
+        self.assertEqual(root, ROOT)
+
+    def test_multiclass_plotter_uses_pdf_export_and_root_anchored_directory(self):
+        notebook = SOURCE / "plotter" / "multi_imv_results.ipynb"
+        data = json.loads(notebook.read_text())
+        source = "\n".join("".join(cell["source"]) for cell in data["cells"])
+        self.assertIn("save_publication_figure as save_figure", source)
+        self.assertIn("FIGURES = figure_directory(PROJECT_ROOT)", source)
+        self.assertNotIn("from imvpy.utils import save_figure", source)
+
 
 if __name__ == "__main__":
     unittest.main()
