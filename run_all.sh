@@ -80,8 +80,13 @@ else
 fi
 
 mapfile -d '' NOTEBOOKS < <(
-    find src -type f -name '*.ipynb' -print0 | sort -z
+    find src -type f -name '*.ipynb' ! -path '*/.ipynb_checkpoints/*' \
+        ! -path 'src/plotter/*' -print0 | sort -z
 )
+# Results-only plotters must follow every experiment producer.
+while IFS= read -r -d '' notebook; do
+    NOTEBOOKS+=("$notebook")
+done < <(find src/plotter -type f -name '*.ipynb' ! -path '*/.ipynb_checkpoints/*' -print0 | sort -z)
 if ((${#NOTEBOOKS[@]} == 0)); then
     printf 'No notebooks found under %s/src\n' "$ROOT_DIR" >&2
     exit 1

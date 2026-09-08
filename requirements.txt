@@ -1,4 +1,9 @@
 imvpy[deep-learning] @ git+https://github.com/intermodelvigorish/imvpy.git@de7fe7a80300ae849fcdc37519651509b380a8d1
+# Compatible with the NumPy-1.x Matplotlib binaries in the existing environment.
+numpy>=1.26,<2
 lightgbm>=4.6,<5
 ucimlrepo>=0.0.7,<1
 xgboost>=3.4,<4
+torch-geometric==2.7.0
+nbconvert>=7.16,<8
+ipykernel>=6.29,<8
