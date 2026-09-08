@@ -52,6 +52,7 @@ PALETTE_COLORS = {
     "blue": "#74ADD1",
     "steel_blue": "#416FA0",
     "navy": "#274668",
+    "green":"#74D1AF"
 }
 COLORMAP = "imv"
 # Stops run cool to warm, so a low value reads navy and a high one red, which is
