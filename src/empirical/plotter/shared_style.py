@@ -6,7 +6,7 @@ calling :func:`apply` is the whole contract::
 
     import sys
     sys.path.insert(0, str(PROJECT_ROOT / "src"))
-    import shared_style
+    from empirical.plotter import shared_style
 
     shared_style.apply()
     figure, axes = plt.subplots(2, 3, figsize=shared_style.figure_size(2, 3),
@@ -20,10 +20,7 @@ from __future__ import annotations
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-if __package__:
-    from .figure_utils import COLORMAP, PAPER_STYLE, spectral_colors
-else:
-    from figure_utils import COLORMAP, PAPER_STYLE, spectral_colors
+from .figure_utils import COLORMAP, PAPER_STYLE, spectral_colors
 
 __all__ = [
     "apply", "figure_size", "categorical_colors", "sequential_cmap",

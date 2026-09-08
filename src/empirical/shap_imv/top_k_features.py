@@ -54,7 +54,7 @@ from xgboost import XGBClassifier
 PROJECT_ROOT = next(
     path for path in (Path.cwd(), *Path.cwd().parents, *Path(__file__).resolve().parents)
     if (path / "requirements.txt").is_file()
-    and (path / "src" / "figure_utils.py").is_file()
+    and (path / "src" / "empirical" / "plotter" / "figure_utils.py").is_file()
 )
 CACHE = Path(os.environ.get("IMV_CACHE_HOME", Path.home() / ".cache" / "imv"))
 DATA_HOME = Path(os.environ.get("IMV_DATA_CACHE", CACHE / "datasets")) / "openml"

@@ -96,7 +96,7 @@ def find_project_root(start=None):
         start = start.parent
     for directory in (start, *start.parents):
         if ((directory / "requirements.txt").is_file()
-                and (directory / "src" / "figure_utils.py").is_file()):
+                and (directory / "src" / "empirical" / "plotter" / "figure_utils.py").is_file()):
             return directory
     raise FileNotFoundError(f"Cannot locate the IMV_ML project above {start}")
 

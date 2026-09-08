@@ -4,8 +4,8 @@ import unittest
 
 import matplotlib as mpl
 
-from src.figure_utils import COLORMAP, PAPER_STYLE
-from src import shared_style
+from src.empirical.plotter.figure_utils import COLORMAP, PAPER_STYLE
+from src.empirical.plotter import shared_style
 
 
 class SharedStyleTests(unittest.TestCase):
