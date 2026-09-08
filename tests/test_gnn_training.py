@@ -16,12 +16,12 @@ import torch
 from imvpy import calculate_imv
 from torch_geometric.nn import GCNConv, global_mean_pool
 
-import gnn.gnn_training as training
-from gnn.gnn_training import (
+import empirical.gnn.gnn_training as training
+from empirical.gnn.gnn_training import (
     GNNConfig, Graph, SparseGCN, execution_plan, normalized_edges, pack_graphs,
     prepare_features, run_seed, score_predictions, split_graphs,
 )
-from gnn.gnn_results import summarize_curves
+from empirical.gnn.gnn_results import summarize_curves
 
 
 class GNNTests(unittest.TestCase):

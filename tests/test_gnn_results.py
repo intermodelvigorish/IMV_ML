@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 
 from figure_utils import save_publication_figure
-from gnn.gnn_results import (
+from empirical.gnn.gnn_results import (
     CURVE_METRICS, DATASET_ORDER, load_gnn_results, plot_gnn_learning_curves,
     plot_gnn_seed_curves,
 )

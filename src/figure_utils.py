@@ -96,7 +96,7 @@ def find_project_root(start=None):
         start = start.parent
     for directory in (start, *start.parents):
         if ((directory / "requirements.txt").is_file()
-                and (directory / "src" / "ablation_imv").is_dir()):
+                and (directory / "src" / "figure_utils.py").is_file()):
             return directory
     raise FileNotFoundError(f"Cannot locate the IMV_ML project above {start}")
 
@@ -156,7 +156,7 @@ def load_ablation_results(example, artifact_root=None, *, seeds=ABLATION_SEEDS):
     for path in (pair_path, diag_path):
         if not path.is_file():
             raise FileNotFoundError(
-                f"Missing result: {path}\nRun src/ablation_imv/"
+                f"Missing result: {path}\nRun src/empirical/ablation_imv/"
                 f"{example.notebook_stem}.ipynb first, or set IMV_ARTIFACT_CACHE."
             )
     pairwise = pd.read_csv(pair_path)

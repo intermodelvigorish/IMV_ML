@@ -13,8 +13,8 @@ usage() {
     cat <<'EOF'
 Usage: ./run_all.sh [--fresh|--resume] [--install] [--dry-run]
 
-Run every example notebook sequentially. Each notebook parallelizes its own
-independent seed/model jobs.
+Run empirical and simulation notebooks sequentially, then results-only plotters.
+Each notebook parallelizes its own independent seed/model jobs.
 
   --fresh    Clear output/, then recompute every seed/model result (default).
   --resume   Reuse valid checkpoints and compute only missing work.
@@ -80,8 +80,8 @@ else
 fi
 
 mapfile -d '' NOTEBOOKS < <(
-    find src -type f -name '*.ipynb' ! -path '*/.ipynb_checkpoints/*' \
-        ! -path 'src/plotter/*' -print0 | sort -z
+    find src/empirical src/simulations -type f -name '*.ipynb' \
+        ! -path '*/.ipynb_checkpoints/*' -print0 | sort -z
 )
 # Results-only plotters must follow every experiment producer.
 while IFS= read -r -d '' notebook; do

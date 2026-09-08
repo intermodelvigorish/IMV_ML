@@ -71,7 +71,7 @@ def load_gnn_results(artifact_root=None):
     if not manifest_path.is_file() or not table_path.is_file():
         raise FileNotFoundError(
             f"Missing completed GNN results in {directory}. "
-            "Execute src/gnn/gnn_training.ipynb first (six datasets, ten seeds, 200 epochs)."
+            "Execute src/empirical/gnn/gnn_training.ipynb first (six datasets, ten seeds, 200 epochs)."
         )
     manifest = json.loads(manifest_path.read_text())
     if (not manifest.get("production") or manifest["datasets"] != list(DATASET_ORDER)
