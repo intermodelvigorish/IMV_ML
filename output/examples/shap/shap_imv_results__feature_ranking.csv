@@ -1,55 +1,73 @@
 example,dataset,model,rank,feature,shap_imv_mean,shap_imv_std
-shap_imv_titanic,Titanic,lightgbm,1,Title,0.1179,0.0015951314818673
-shap_imv_titanic,Titanic,lightgbm,2,Sex,0.1072,0.001873795909674
-shap_imv_titanic,Titanic,lightgbm,3,Fare,0.0562999999999999,0.0055186552307202
-shap_imv_titanic,Titanic,lightgbm,4,Class,0.0495,0.0014337208778404
-shap_imv_titanic,Titanic,lightgbm,5,AgeClass,0.0237999999999999,0.003994440581052
-shap_imv_titanic,Titanic,lightgbm,6,Embarked,0.0132,0.0019888578520235
-shap_imv_titanic,Titanic,logistic_regression,1,Sex,0.1515,0.0020682789409984
-shap_imv_titanic,Titanic,logistic_regression,2,Title,0.069,0.0024037008503093
-shap_imv_titanic,Titanic,logistic_regression,3,Class,0.0409,0.0011005049346146
-shap_imv_titanic,Titanic,logistic_regression,4,AgeClass,0.0387,0.0015670212364724
-shap_imv_titanic,Titanic,logistic_regression,5,Fare,0.02,0.0010540925533894
-shap_imv_titanic,Titanic,logistic_regression,6,Embarked,0.0134,0.0009660917830792
-shap_imv_titanic,Titanic,xgboost,1,Title,0.1177,0.0016363916944844
-shap_imv_titanic,Titanic,xgboost,2,Sex,0.1076,0.0017763883459298
-shap_imv_titanic,Titanic,xgboost,3,Fare,0.0631,0.0052799410771122
-shap_imv_titanic,Titanic,xgboost,4,Class,0.0487,0.0012516655570345
-shap_imv_titanic,Titanic,xgboost,5,AgeClass,0.02,0.0041899350299921
-shap_imv_titanic,Titanic,xgboost,6,Embarked,0.0136,0.0013498971154211
-shap_imv_breast_cancer,Breast Cancer,lightgbm,1,radius1,0.229,0.0071024252508875
-shap_imv_breast_cancer,Breast Cancer,lightgbm,2,compactness1,0.1271,0.0062618776026932
-shap_imv_breast_cancer,Breast Cancer,lightgbm,3,texture1,0.0744,0.0058916136254095
-shap_imv_breast_cancer,Breast Cancer,lightgbm,4,smoothness1,0.0462,0.0048944412914607
-shap_imv_breast_cancer,Breast Cancer,lightgbm,5,fractal_dimension1,0.0228,0.0079134203870527
-shap_imv_breast_cancer,Breast Cancer,lightgbm,6,symmetry1,0.0195,0.0084360338232291
-shap_imv_breast_cancer,Breast Cancer,logistic_regression,1,radius1,0.2172,0.0028982753492378
-shap_imv_breast_cancer,Breast Cancer,logistic_regression,2,compactness1,0.1306999999999999,0.0017029386365926
-shap_imv_breast_cancer,Breast Cancer,logistic_regression,3,texture1,0.0696,0.0027968235951204
-shap_imv_breast_cancer,Breast Cancer,logistic_regression,4,smoothness1,0.0504,0.0010749676997731
-shap_imv_breast_cancer,Breast Cancer,logistic_regression,5,symmetry1,0.0331,0.0026436506745197
-shap_imv_breast_cancer,Breast Cancer,logistic_regression,6,fractal_dimension1,0.0284,0.0018378731669453
-shap_imv_breast_cancer,Breast Cancer,xgboost,1,radius1,0.2309,0.006332456079595
-shap_imv_breast_cancer,Breast Cancer,xgboost,2,compactness1,0.132,0.004618802153517
-shap_imv_breast_cancer,Breast Cancer,xgboost,3,texture1,0.0769,0.0062795965900154
-shap_imv_breast_cancer,Breast Cancer,xgboost,4,smoothness1,0.0465999999999999,0.0061860057118197
-shap_imv_breast_cancer,Breast Cancer,xgboost,5,symmetry1,0.0214,0.0075748120622083
-shap_imv_breast_cancer,Breast Cancer,xgboost,6,fractal_dimension1,0.0152,0.0077860273710167
-shap_imv_adult_income,Adult Income,lightgbm,1,married,0.053,0.0
-shap_imv_adult_income,Adult Income,lightgbm,2,capital-gain,0.047,0.0
-shap_imv_adult_income,Adult Income,lightgbm,3,education-num,0.037,0.0
-shap_imv_adult_income,Adult Income,lightgbm,4,age,0.029,0.0
-shap_imv_adult_income,Adult Income,lightgbm,5,hours-per-week,0.016,0.0
-shap_imv_adult_income,Adult Income,lightgbm,6,sex_female,0.01,0.0
-shap_imv_adult_income,Adult Income,logistic_regression,1,married,0.061,0.0
-shap_imv_adult_income,Adult Income,logistic_regression,2,education-num,0.042,0.0
+shap_imv_titanic,Titanic,lightgbm,1,Title,0.1127,0.0018287822299126
+shap_imv_titanic,Titanic,lightgbm,2,Sex,0.1042999999999999,0.0020575065816014
+shap_imv_titanic,Titanic,lightgbm,3,Fare,0.0531,0.0050870205206759
+shap_imv_titanic,Titanic,lightgbm,4,Class,0.0458,0.0017511900715418
+shap_imv_titanic,Titanic,lightgbm,5,AgeClass,0.0248,0.0041846279537267
+shap_imv_titanic,Titanic,lightgbm,6,Embarked,0.0121,0.0017288403306519
+shap_imv_titanic,Titanic,lightgbm,7,Alone,0.0087,0.0009486832980505
+shap_imv_titanic,Titanic,lightgbm,8,Age,0.0008,0.0031552425509864
+shap_imv_titanic,Titanic,logistic_regression,1,Sex,0.1466,0.0023190036174568
+shap_imv_titanic,Titanic,logistic_regression,2,Title,0.0649,0.0025582111805799
+shap_imv_titanic,Titanic,logistic_regression,3,Class,0.0414,0.0006992058987801
+shap_imv_titanic,Titanic,logistic_regression,4,AgeClass,0.0351999999999999,0.001135292424395
+shap_imv_titanic,Titanic,logistic_regression,5,Fare,0.0185,0.0008498365855987
+shap_imv_titanic,Titanic,logistic_regression,6,Embarked,0.0131,0.0007378647873726
+shap_imv_titanic,Titanic,logistic_regression,7,Alone,0.0111,0.0008755950357709
+shap_imv_titanic,Titanic,logistic_regression,8,Age,0.0045,0.0009718253158075
+shap_imv_titanic,Titanic,xgboost,1,Title,0.1129,0.0020248456731316
+shap_imv_titanic,Titanic,xgboost,2,Sex,0.1048,0.0022010098692292
+shap_imv_titanic,Titanic,xgboost,3,Fare,0.0598,0.0052451035367389
+shap_imv_titanic,Titanic,xgboost,4,Class,0.0453999999999999,0.0010749676997731
+shap_imv_titanic,Titanic,xgboost,5,AgeClass,0.0224,0.0041686661868969
+shap_imv_titanic,Titanic,xgboost,6,Embarked,0.0127,0.0014181364924121
+shap_imv_titanic,Titanic,xgboost,7,Alone,0.0086,0.0010749676997731
+shap_imv_titanic,Titanic,xgboost,8,Age,-0.0002,0.0035839146815241
+shap_imv_breast_cancer,Breast Cancer,lightgbm,1,radius1,0.1266,0.0038930136855083
+shap_imv_breast_cancer,Breast Cancer,lightgbm,2,concave_points1,0.1262,0.0035839146815241
+shap_imv_breast_cancer,Breast Cancer,lightgbm,3,concavity1,0.1128,0.0033598941782277
+shap_imv_breast_cancer,Breast Cancer,lightgbm,4,compactness1,0.0683999999999999,0.0030623157540948
+shap_imv_breast_cancer,Breast Cancer,lightgbm,5,texture1,0.0496,0.0042478752858863
+shap_imv_breast_cancer,Breast Cancer,lightgbm,6,smoothness1,0.0283,0.0029832867780352
+shap_imv_breast_cancer,Breast Cancer,lightgbm,7,symmetry1,0.0142,0.0052025634707004
+shap_imv_breast_cancer,Breast Cancer,lightgbm,8,fractal_dimension1,0.0097,0.0055186552307202
+shap_imv_breast_cancer,Breast Cancer,logistic_regression,1,concave_points1,0.1286999999999999,0.0006749485577105
+shap_imv_breast_cancer,Breast Cancer,logistic_regression,2,radius1,0.1238,0.0015491933384829
+shap_imv_breast_cancer,Breast Cancer,logistic_regression,3,concavity1,0.0963,0.0011595018087284
+shap_imv_breast_cancer,Breast Cancer,logistic_regression,4,compactness1,0.072,0.000942809041582
+shap_imv_breast_cancer,Breast Cancer,logistic_regression,5,texture1,0.0504,0.0021705094128132
+shap_imv_breast_cancer,Breast Cancer,logistic_regression,6,smoothness1,0.0306,0.0008432740427115
+shap_imv_breast_cancer,Breast Cancer,logistic_regression,7,symmetry1,0.0211,0.0018529256146249
+shap_imv_breast_cancer,Breast Cancer,logistic_regression,8,fractal_dimension1,0.0162,0.0013165611772087
+shap_imv_breast_cancer,Breast Cancer,xgboost,1,concave_points1,0.1286999999999999,0.0041109609582188
+shap_imv_breast_cancer,Breast Cancer,xgboost,2,radius1,0.1276,0.0030258148581093
+shap_imv_breast_cancer,Breast Cancer,xgboost,3,concavity1,0.1152,0.0030110906108363
+shap_imv_breast_cancer,Breast Cancer,xgboost,4,compactness1,0.071,0.0023094010767584
+shap_imv_breast_cancer,Breast Cancer,xgboost,5,texture1,0.0513,0.0043728963196287
+shap_imv_breast_cancer,Breast Cancer,xgboost,6,smoothness1,0.0278,0.0036147844564602
+shap_imv_breast_cancer,Breast Cancer,xgboost,7,symmetry1,0.0133,0.0047152235719351
+shap_imv_breast_cancer,Breast Cancer,xgboost,8,fractal_dimension1,0.0029,0.0053634565968847
+shap_imv_adult_income,Adult Income,lightgbm,1,married,0.05,0.0
+shap_imv_adult_income,Adult Income,lightgbm,2,capital-gain,0.045,0.0
+shap_imv_adult_income,Adult Income,lightgbm,3,education-num,0.034,0.0
+shap_imv_adult_income,Adult Income,lightgbm,4,age,0.0278,0.0004216370213557
+shap_imv_adult_income,Adult Income,lightgbm,5,capital-loss,0.0177,0.0004830458915396
+shap_imv_adult_income,Adult Income,lightgbm,6,hours-per-week,0.015,0.0
+shap_imv_adult_income,Adult Income,lightgbm,7,sex_female,0.009,0.0
+shap_imv_adult_income,Adult Income,lightgbm,8,race_white,0.001,0.0
+shap_imv_adult_income,Adult Income,logistic_regression,1,married,0.059,0.0
+shap_imv_adult_income,Adult Income,logistic_regression,2,education-num,0.041,0.0
 shap_imv_adult_income,Adult Income,logistic_regression,3,capital-gain,0.032,0.0
-shap_imv_adult_income,Adult Income,logistic_regression,4,age,0.013,0.0
-shap_imv_adult_income,Adult Income,logistic_regression,5,hours-per-week,0.013,0.0
+shap_imv_adult_income,Adult Income,logistic_regression,4,age,0.0129,0.0003162277660168
+shap_imv_adult_income,Adult Income,logistic_regression,5,hours-per-week,0.012,0.0
 shap_imv_adult_income,Adult Income,logistic_regression,6,sex_female,0.01,0.0
-shap_imv_adult_income,Adult Income,xgboost,1,married,0.053,0.0
-shap_imv_adult_income,Adult Income,xgboost,2,capital-gain,0.0465999999999999,0.0005163977794943
-shap_imv_adult_income,Adult Income,xgboost,3,education-num,0.037,0.0
-shap_imv_adult_income,Adult Income,xgboost,4,age,0.029,0.0
-shap_imv_adult_income,Adult Income,xgboost,5,hours-per-week,0.016,0.0
-shap_imv_adult_income,Adult Income,xgboost,6,sex_female,0.01,0.0
+shap_imv_adult_income,Adult Income,logistic_regression,7,capital-loss,0.006,0.0
+shap_imv_adult_income,Adult Income,logistic_regression,8,race_white,0.0018,0.0004216370213557
+shap_imv_adult_income,Adult Income,xgboost,1,married,0.05,0.0
+shap_imv_adult_income,Adult Income,xgboost,2,capital-gain,0.045,0.0
+shap_imv_adult_income,Adult Income,xgboost,3,education-num,0.034,0.0
+shap_imv_adult_income,Adult Income,xgboost,4,age,0.0278,0.0004216370213557
+shap_imv_adult_income,Adult Income,xgboost,5,capital-loss,0.0177,0.0004830458915396
+shap_imv_adult_income,Adult Income,xgboost,6,hours-per-week,0.015,0.0
+shap_imv_adult_income,Adult Income,xgboost,7,sex_female,0.009,0.0
+shap_imv_adult_income,Adult Income,xgboost,8,race_white,0.001,0.0

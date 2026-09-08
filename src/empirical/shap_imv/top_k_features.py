@@ -164,6 +164,7 @@ def load_adult_income() -> pd.DataFrame:
     frame["sex_female"] = (frame["sex"].astype(str).str.strip() == "Female").astype(int)
     frame["married"] = (frame["marital-status"].astype(str).str.strip()
                         .str.startswith("Married").astype(int))
+    frame["race_white"] = (frame["race"].astype(str).str.strip() == "White").astype(int)
     return frame
 
 
@@ -171,15 +172,17 @@ EXAMPLES = {
     example.name: example
     for example in (
         Example("shap_imv_titanic", "titanic", "Titanic",
-                ("Sex", "Title", "Class", "AgeClass", "Fare", "Embarked"),
+                ("Sex", "Title", "Class", "AgeClass", "Fare", "Embarked",
+                 "Alone", "Age"),
                 load_titanic),
         Example("shap_imv_breast_cancer", "breast_cancer", "Breast Cancer",
                 ("radius1", "texture1", "smoothness1", "compactness1",
-                 "symmetry1", "fractal_dimension1"),
+                 "symmetry1", "fractal_dimension1", "concavity1",
+                 "concave_points1"),
                 load_breast_cancer),
         Example("shap_imv_adult_income", "adult_income", "Adult Income",
                 ("age", "education-num", "hours-per-week", "capital-gain",
-                 "sex_female", "married"),
+                 "capital-loss", "sex_female", "married", "race_white"),
                 load_adult_income),
     )
 }
@@ -438,8 +441,9 @@ def run_example(example: Example, n_jobs: int) -> pd.DataFrame:
                 importance = np.mean(per_seed[(model_name, method)], axis=0)
             selected, dropped = select_top_k(features, importance)
             columns = [features.index(name) for name in selected]
-            # Six features choose five leaves at most six distinct subsets, and
-            # the methods often agree, so each subset is evaluated once.
+            # Four rankings of the same eight features name at most four
+            # distinct top-five subsets, and the methods often agree, so each
+            # distinct subset is evaluated once.
             key = (model_name, tuple(sorted(columns)))
             if key not in evaluated:
                 evaluated[key] = evaluate(model_name, X, y, columns)

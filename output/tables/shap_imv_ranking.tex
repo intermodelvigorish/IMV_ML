@@ -3,7 +3,7 @@
 \begin{table*}[h]
 \centering
 \tabcolsep=3pt
-\caption{Variables of each dataset ranked by SHAP-IMV under three machine learning methods, with the mean exact Shapley value in parentheses. Each value is a mean over 10 seeds of 10-fold cross-validation. Ranks 1--5 are the subset the SHAP-IMV rows of Table~\ref{SHAPIMVTabulartable} refit; anything beyond is the feature that method drops. The variables of each dataset are a fixed 6-variable specification carried over from the example notebooks, not the dataset's full variable list: exact Shapley attribution costs one model evaluation per subset of them.}
+\caption{Variables of each dataset ranked by SHAP-IMV under three machine learning methods, with the mean exact Shapley value in parentheses. Each value is a mean over 10 seeds of 10-fold cross-validation. Ranks 1--5 are the subset the SHAP-IMV rows of Table~\ref{SHAPIMVTabulartable} refit; the remaining 1 are the ones that method drops. The variables of each dataset are a fixed 6-variable specification carried over from the example notebooks, not the dataset's full variable list: exact Shapley attribution costs one model evaluation per subset of them.}
 \resizebox{\textwidth}{!}{
     \begin{tabular}{cccccccc}
         \toprule
@@ -21,9 +21,9 @@
         & LGBM & Radius (0.229) & Compactness (0.127) & Texture (0.074) & Smoothness (0.046) & Fractal dim. (0.023) & Symmetry (0.019)\\
         \midrule
         \multirow{3}{*}{Adult Income}
-        & LR & Married (0.061) & Education (0.042) & Capital gain (0.032) & Age (0.013) & Hours/week (0.013) & Sex (0.010)\\
-        & \cellcolor{gray!15}XGB & \cellcolor{gray!15}Married (0.053) & \cellcolor{gray!15}Capital gain (0.047) & \cellcolor{gray!15}Education (0.037) & \cellcolor{gray!15}Age (0.029) & \cellcolor{gray!15}Hours/week (0.016) & \cellcolor{gray!15}Sex (0.010)\\
-        & LGBM & Married (0.053) & Capital gain (0.047) & Education (0.037) & Age (0.029) & Hours/week (0.016) & Sex (0.010)\\
+        & LR & Married (0.061) & Education (0.042) & Capital gain (0.032) & Age (0.013) & Hours/week (0.013) & Sex (female) (0.010)\\
+        & \cellcolor{gray!15}XGB & \cellcolor{gray!15}Married (0.053) & \cellcolor{gray!15}Capital gain (0.047) & \cellcolor{gray!15}Education (0.037) & \cellcolor{gray!15}Age (0.029) & \cellcolor{gray!15}Hours/week (0.016) & \cellcolor{gray!15}Sex (female) (0.010)\\
+        & LGBM & Married (0.053) & Capital gain (0.047) & Education (0.037) & Age (0.029) & Hours/week (0.016) & Sex (female) (0.010)\\
         \bottomrule
         \label{SHAPIMVRankingtable}
     \end{tabular}}
