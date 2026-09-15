@@ -1,3 +1,26 @@
 __pycache__/
 *.py[cod]
 .ipynb_checkpoints/
+
+# Validation is displayed in notebooks, not committed as generated reports.
+/output/audit/
+/output/checks/
+/output/verification/
+/audit/
+/checks/
+/verification/
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Publish compact Ablate-IMV results, not predictions, checkpoints or scratch files.
+/output/examples/ablation_imv/*
+!/output/examples/ablation_imv/*_ablation_imv_by_seed.csv
+!/output/examples/ablation_imv/*_variant_diagnostics.csv
+!/output/examples/ablation_imv/*_ablation_imv_directional.csv
+!/output/examples/ablation_imv/*_ablation_imv_directional_std.csv
+!/output/examples/ablation_imv/*_full_vs_ablation.csv
+!/output/examples/ablation_imv/*_imv_vs_null_by_seed.csv
+!/output/examples/ablation_imv/*_imv_vs_null_summary.csv

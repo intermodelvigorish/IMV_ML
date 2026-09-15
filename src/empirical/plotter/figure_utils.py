@@ -9,6 +9,8 @@ from dataclasses import dataclass
 from pathlib import Path
 import logging
 import os
+import shutil
+import tempfile
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -552,13 +554,15 @@ def _require_complete(table, columns, keys, expected_index, path):
         )
 
 
-def load_ablation_results(example, artifact_root=None, *, seeds=ABLATION_SEEDS):
+def load_ablation_results(example, artifact_root=None, *, project_root=None, seeds=ABLATION_SEEDS):
     """Load a complete paired experiment and compute each model's null IMV.
 
     Section 4.4, Eq. (10) of the paper uses constant p=0.5. The source
     diagnostics already store each seed/model's geometric mean likelihood,
     so imvpy can calculate this score without loading or refitting a model.
     Transform each seed before averaging: IMV is nonlinear in likelihood.
+    With project_root, prefer the published CSV pair. An incomplete published
+    pair is an error, never an invitation to mix it with cached results.
     """
     from imvpy import AblationIMV, imv_from_likelihoods
 
@@ -567,13 +571,19 @@ def load_ablation_results(example, artifact_root=None, *, seeds=ABLATION_SEEDS):
         raise ValueError("At least two distinct seeds are required for sample SD")
     root = artifact_directory() if artifact_root is None else Path(artifact_root).expanduser()
     results = root / example.notebook_stem / "results"
+    if project_root is not None:
+        published = Path(project_root).expanduser() / "output/examples/ablation_imv"
+        if any((published / f"{example.dataset}_{suffix}.csv").is_file()
+               for suffix in ("ablation_imv_by_seed", "variant_diagnostics")):
+            results = published
     pair_path = results / f"{example.dataset}_ablation_imv_by_seed.csv"
     diag_path = results / f"{example.dataset}_variant_diagnostics.csv"
     for path in (pair_path, diag_path):
         if not path.is_file():
             raise FileNotFoundError(
                 f"Missing result: {path}\nRun src/empirical/ablation_imv/"
-                f"{example.notebook_stem}.ipynb first, or set IMV_ARTIFACT_CACHE."
+                f"{example.notebook_stem}.ipynb first, restore its complete published CSV pair, "
+                "or set IMV_ARTIFACT_CACHE when no published pair exists."
             )
     pairwise = pd.read_csv(pair_path)
     diagnostics = pd.read_csv(diag_path)
@@ -633,6 +643,38 @@ def load_ablation_results(example, artifact_root=None, *, seeds=ABLATION_SEEDS):
                     .agg(["mean", "std", "count"]).reindex(variants))
     return AblationResults(example, seeds, mean, std, null_by_seed, null_summary,
                            (pair_path, diag_path))
+
+
+def export_ablation_results(example, artifact_root=None, *, project_root=None, seeds=ABLATION_SEEDS):
+    """Publish compact, validated figure inputs; leave prediction traces cached."""
+    result = load_ablation_results(example, artifact_root, seeds=seeds)
+    project_root = find_project_root() if project_root is None else Path(project_root).expanduser()
+    destination = project_root / "output/examples/ablation_imv"
+    full = example.variants[0]
+    full_comparison = pd.DataFrame({
+        "mean": result.pairwise_mean.loc[full], "std": result.pairwise_std.loc[full],
+    }).reindex(example.variants[1:])
+    full_comparison.index.name = "basic"
+    summaries = {
+        "ablation_imv_directional": (result.pairwise_mean, True),
+        "ablation_imv_directional_std": (result.pairwise_std, True),
+        "full_vs_ablation": (full_comparison, True),
+        "imv_vs_null_by_seed": (result.null_by_seed, False),
+        "imv_vs_null_summary": (result.null_summary, True),
+    }
+    destination.mkdir(parents=True, exist_ok=True)
+    # Prepare every file before replacing any existing published result. Each
+    # replacement is atomic; the loader detects an interrupted mixed CSV pair.
+    with tempfile.TemporaryDirectory(prefix=f".{example.dataset}-export-", dir=destination) as temporary:
+        stage = Path(temporary)
+        for source in result.source_paths:
+            shutil.copyfile(source, stage / source.name)
+        for suffix, (table, index) in summaries.items():
+            table.to_csv(stage / f"{example.dataset}_{suffix}.csv", index=index)
+        names = sorted(path.name for path in stage.iterdir())
+        for name in names:
+            os.replace(stage / name, destination / name)
+    return tuple(destination / name for name in names)
 
 
 def plot_ablation_overview(results, *, figsize=(15.5, 9.0)):

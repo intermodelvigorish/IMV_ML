@@ -18,7 +18,7 @@ from imvpy import imv_from_likelihoods
 
 from src.empirical.plotter import figure_utils
 from src.empirical.plotter.figure_utils import (
-    COLORMAP, AblationExample, configure_plotting, load_ablation_results,
+    COLORMAP, AblationExample, configure_plotting, export_ablation_results, load_ablation_results,
     plot_ablation_matrix, plot_ablation_overview, save_publication_figure, spectral_colors,
 )
 
@@ -117,6 +117,50 @@ assert figure_utils.PALETTE == COLORMAP
     def test_missing_files_have_upstream_notebook_hint(self):
         with self.assertRaisesRegex(FileNotFoundError, "ablation_imv_fixture.ipynb"):
             load_ablation_results(self.example, self.root / "missing")
+
+    def test_export_publishes_only_compact_results_and_preserves_source_bytes(self):
+        (self.directory / "predictions_fixture_seed_42.csv").write_text("private trace")
+        paths = export_ablation_results(self.example, self.root, project_root=self.root, seeds=(42, 43))
+        published = self.root / "output/examples/ablation_imv"
+        self.assertEqual(len(paths), 7)
+        self.assertEqual(set(published.iterdir()), set(paths))
+        for source in (self.pair_path, self.diag_path):
+            self.assertEqual((published / source.name).read_bytes(), source.read_bytes())
+        self.assertFalse(any("predictions" in path.name for path in paths))
+        loaded = load_ablation_results(self.example, self.root / "missing", project_root=self.root,
+                                       seeds=(42, 43))
+        pd.testing.assert_frame_equal(loaded.pairwise_mean, self.load().pairwise_mean)
+        null = pd.read_csv(published / "fixture_imv_vs_null_summary.csv", index_col=0)
+        pd.testing.assert_frame_equal(null, loaded.null_summary)
+
+    def test_published_pair_takes_precedence_over_cache(self):
+        expected = self.load()
+        export_ablation_results(self.example, self.root, project_root=self.root, seeds=(42, 43))
+        self.pair_path.write_text("invalid cache")
+        loaded = load_ablation_results(self.example, self.root, project_root=self.root, seeds=(42, 43))
+        pd.testing.assert_frame_equal(loaded.pairwise_mean, expected.pairwise_mean)
+        self.assertTrue(all(path.parent == self.root / "output/examples/ablation_imv"
+                            for path in loaded.source_paths))
+
+    def test_partial_publication_fails_instead_of_mixing_with_cache(self):
+        published = self.root / "output/examples/ablation_imv"
+        published.mkdir(parents=True)
+        # An empty publication directory still permits a complete cached pair.
+        cached = load_ablation_results(self.example, self.root, project_root=self.root, seeds=(42, 43))
+        self.assertEqual(cached.source_paths, (self.pair_path, self.diag_path))
+        shutil.copy2(self.diag_path, published / self.diag_path.name)
+        with self.assertRaisesRegex(FileNotFoundError, "complete published CSV pair"):
+            load_ablation_results(self.example, self.root, project_root=self.root, seeds=(42, 43))
+
+    def test_failed_validation_does_not_overwrite_published_results(self):
+        paths = export_ablation_results(self.example, self.root, project_root=self.root, seeds=(42, 43))
+        before = {path: path.read_bytes() for path in paths}
+        diagnostics = pd.read_csv(self.diag_path)
+        diagnostics.loc[0, "geometric_mean_likelihood"] = .8
+        diagnostics.to_csv(self.diag_path, index=False)
+        with self.assertRaisesRegex(ValueError, "disagree"):
+            export_ablation_results(self.example, self.root, project_root=self.root, seeds=(42, 43))
+        self.assertEqual(before, {path: path.read_bytes() for path in paths})
 
     def test_six_panels_share_scales_and_bars_use_saved_scores(self):
         result = self.load()

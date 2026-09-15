@@ -26,6 +26,30 @@ def notebooks():
 
 
 class SourceLayoutTests(unittest.TestCase):
+    def test_ablation_producers_publish_results_without_training_in_export_cells(self):
+        for path in (SOURCE / "empirical/ablation_imv").glob("*.ipynb"):
+            cells = json.loads(path.read_text())["cells"]
+            cell = next(cell for cell in cells if cell.get("id") == "ablation-publish-results")
+            source = "".join(cell["source"])
+            self.assertIn("export_ablation_results(", source)
+            self.assertIn("ARTIFACTS.parent, project_root=PROJECT_ROOT", source)
+            self.assertNotIn("train_and_evaluate", source)
+            self.assertNotIn("evaluate_seed(", source)
+
+    def test_gitignore_tracks_ablation_results_but_not_prediction_or_training_artifacts(self):
+        base = "output/examples/ablation_imv/"
+        tracked = [base + "mnist_" + suffix + ".csv" for suffix in (
+            "ablation_imv_by_seed", "variant_diagnostics", "ablation_imv_directional",
+            "ablation_imv_directional_std", "full_vs_ablation", "imv_vs_null_by_seed",
+            "imv_vs_null_summary")]
+        ignored = [base + name for name in (
+            "predictions_mnist_fullcnn_seed_42.csv", "model.pt", "training/state.pkl",
+            ".mnist-export-tmp/partial.csv")]
+        result = subprocess.run(["git", "check-ignore", "--no-index", "--stdin"], cwd=ROOT,
+                                input="\n".join(tracked + ignored) + "\n",
+                                capture_output=True, text=True, check=True)
+        self.assertEqual(set(result.stdout.splitlines()), set(ignored))
+
     def test_examples_live_in_one_of_the_two_groups(self):
         for group in ("ablation_imv", "gnn", "multi_imv", "shap_imv", "plotter"):
             self.assertTrue((SOURCE / "empirical" / group).is_dir())

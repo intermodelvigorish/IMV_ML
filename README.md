@@ -240,9 +240,18 @@ wider heatmap colourbars stay aligned to their panels without changing row spaci
 | Multiclass overview figures | [Figure 3: Dry Bean](output/figures/figure_3.pdf), [Figure A4: Car Evaluation and Nursery](output/figures/figure_A4.pdf) |
 | Standalone ablation, multiclass, and SHAP-IMV figures | [output/figures/](output/figures/) |
 | Multiclass metrics and top-five feature tables | [output/examples/](output/examples/) |
+| Ablate-IMV seed scores, likelihoods, directional matrices, and null comparisons | [output/examples/ablation_imv/](output/examples/ablation_imv/) |
 | Complexity table and timing audit files | [output/tables/](output/tables/) |
 
 ## Recovery Workflows
+
+Each ablation notebook publishes seven compact CSVs per dataset into
+`output/examples/ablation_imv/`. The combined plotter prefers these committed
+inputs, falling back to the external artifact cache only when neither input
+CSV is published. It never mixes a published file with a cached counterpart.
+The final export cell can also publish an existing completed cache without
+retraining. Prediction traces, checkpoints, and datasets remain in the cache;
+`.gitignore` allows only the compact result CSVs in the publication directory.
 
 - **Interrupted run:** restart with `bash run_all.sh --resume`. Completed work is reused where supported; GNN jobs restart from their latest valid checkpoint.
 - **Missing plotter inputs:** run the producer named in the error, with `python -m nbconvert --execute --to notebook --inplace --ExecutePreprocessor.timeout=-1 --ExecutePreprocessor.kernel_name=imv-ml PATH_TO_NOTEBOOK`, then rerun the combined plotter. Point `IMV_ARTIFACT_CACHE` at the original results if they are stored elsewhere.

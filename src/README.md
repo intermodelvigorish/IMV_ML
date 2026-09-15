@@ -79,6 +79,14 @@ from IMV against the constant 0.5 baseline and reports seed standard deviations,
 not confidence intervals. The previous descriptive overview filename is retired
 only after the numbered PDF saves successfully.
 
+The ablation producers also publish seven CSVs each to
+`output/examples/ablation_imv/`: paired seed scores, per-variant likelihoods
+and metrics, directional means/SDs, full-versus-ablated means/SDs, and seed-level
+and summarized IMV against the 0.5 null. `export_ablation_results()` validates
+the cached experiment before publishing. Section 3 loads the published input
+pair with `load_ablation_results(..., project_root=PROJECT_ROOT)`; if neither
+CSV exists it falls back to the external cache. Partial pairs fail explicitly.
+
 Section 4 exports all six GNN datasets as `figure_5.pdf`, with a matching caption
 in the notebook. Means and minimum-to-maximum seed bands include every epoch
 from 0 to 200, without smoothing. The individual-seed diagnostic remains a
